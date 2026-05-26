@@ -19,8 +19,8 @@ function getInitials(name: string): string {
 
 function getGreeting(name: string, hours: number): string {
   const firstName = name.trim().split(/\s+/)[0] ?? name
-  if (hours >= 5 && hours < 12) return `Bom dia, ${firstName}! 🌤`
-  if (hours >= 12 && hours < 18) return `Boa tarde, ${firstName}! ☀`
+  if (hours >= 5 && hours < 12) return `Bom dia, ${firstName}! ☀️`
+  if (hours >= 12 && hours < 18) return `Boa tarde, ${firstName}! 🌤️`
   return `Boa noite, ${firstName}! 🌙`
 }
 
