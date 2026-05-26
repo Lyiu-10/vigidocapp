@@ -1,12 +1,71 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ShieldCheck } from 'lucide-react-native';
 
+const SCHEDULED_TIMES = ['08:00', '14:00', '22:00'];
+
+// Calcula a próxima data/hora exata que esse alarme deve tocar
+function getNextOccurrence(timeStr: string, now: Date) {
+  const [hours, minutes] = timeStr.split(':').map(Number);
+  const date = new Date(now.getTime());
+  date.setHours(hours, minutes, 0, 0);
+
+  // Se o horário já passou hoje, joga para amanhã
+  if (date.getTime() <= now.getTime()) {
+    date.setDate(date.getDate() + 1);
+  }
+  return date;
+}
+
+// Formata a diferença de tempo de forma amigável
+function getTimeDifferenceString(target: Date, now: Date) {
+  let diffMs = target.getTime() - now.getTime();
+  if (diffMs < 0) diffMs = 0;
+
+  const totalMins = Math.floor(diffMs / 1000 / 60);
+  const hours = Math.floor(totalMins / 60);
+  const minutes = totalMins % 60;
+
+  if (hours > 0 && minutes > 0) {
+    return `Daqui a ${hours}h ${minutes}min`;
+  }
+  if (hours > 0) {
+    return `Daqui a ${hours}h`;
+  }
+  if (minutes > 0) {
+    return `Daqui a ${minutes}min`;
+  }
+  return 'Agora mesmo';
+}
+
 export default function NotificationsScreen() {
+  const [now, setNow] = useState(new Date());
+
+  useEffect(() => {
+    // Atualiza o relógio interno a cada 30 segundos
+    const interval = setInterval(() => {
+      setNow(new Date());
+    }, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // 1. Criar objetos de data/hora para todos os alarmes
+  const occurrences = SCHEDULED_TIMES.map(timeStr => ({
+    timeStr,
+    date: getNextOccurrence(timeStr, now)
+  }));
+
+  // 2. Ordenar para descobrir quem está mais próximo (o menor tempo)
+  occurrences.sort((a, b) => a.date.getTime() - b.date.getTime());
+
+  // 3. Separar o alarme principal (mais próximo) dos restantes (fila)
+  const mainAlarm = occurrences[0];
+  const queueAlarms = occurrences.slice(1);
+
   return (
     <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
-      <ScrollView
+      <ScrollView 
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
@@ -18,7 +77,7 @@ export default function NotificationsScreen() {
         </View>
 
         {/* 2. Banner de Segurança do Sistema */}
-        <View
+        <View 
           style={styles.securityBanner}
           accessible={true}
           accessibilityRole="text"
@@ -34,27 +93,29 @@ export default function NotificationsScreen() {
         <View style={styles.agendaSection}>
           <View style={styles.agendaHeader}>
             <Text style={styles.agendaTitle}>Lembretes agendados</Text>
-            <View style={styles.badge} accessible={true} accessibilityLabel="3 lembretes programados para hoje">
-              <Text style={styles.badgeText}>3 lembretes</Text>
+            <View style={styles.badge} accessible={true} accessibilityLabel={`${SCHEDULED_TIMES.length} lembretes programados`}>
+              <Text style={styles.badgeText}>{SCHEDULED_TIMES.length} lembretes</Text>
             </View>
           </View>
 
           {/* 4. Card de Lembrete Principal (O mais próximo) */}
           <View style={styles.reminderCard}>
             <View style={styles.cardTopLine}>
-              <Text style={styles.cardTopTitle}>Primeira aferição do dia</Text>
+              <Text style={styles.cardTopTitle}>Próxima aferição</Text>
               <View style={styles.cardBadge}>
                 <View style={styles.badgeDot} />
-                <Text style={styles.cardBadgeText}>Próximo</Text>
+                <Text style={styles.cardBadgeText}>Em destaque</Text>
               </View>
             </View>
 
-            <View style={styles.cardCenter} accessible={true} accessibilityLabel="Lembrete principal marcado para as 08:00">
-              <Text style={styles.timeGiant}>08:00</Text>
+            <View style={styles.cardCenter} accessible={true} accessibilityLabel={`Lembrete principal marcado para as ${mainAlarm.timeStr}`}>
+              <Text style={styles.timeGiant}>{mainAlarm.timeStr}</Text>
             </View>
 
             <View style={styles.cardBottomPill}>
-              <Text style={styles.cardBottomText}>O alarme tocará em breve</Text>
+              <Text style={styles.cardBottomText}>
+                {getTimeDifferenceString(mainAlarm.date, now)}
+              </Text>
             </View>
           </View>
 
@@ -62,24 +123,17 @@ export default function NotificationsScreen() {
           <View style={styles.queueContainer}>
             <Text style={styles.queueTitle}>Próximos horários na fila:</Text>
 
-            {/* Mini Card 1 */}
-            <View style={styles.miniCard} accessible={true} accessibilityLabel="Lembrete marcado para as 14:00">
-              <View style={styles.miniCardLeft}>
-                <View style={[styles.miniBadgeDot, { backgroundColor: '#CBD5E1' }]} />
-                <Text style={styles.miniCardTime}>14:00</Text>
+            {queueAlarms.map((alarm, index) => (
+              <View key={index} style={styles.miniCard} accessible={true} accessibilityLabel={`Lembrete marcado para as ${alarm.timeStr}`}>
+                <View style={styles.miniCardLeft}>
+                  <View style={[styles.miniBadgeDot, { backgroundColor: '#CBD5E1' }]} />
+                  <Text style={styles.miniCardTime}>{alarm.timeStr}</Text>
+                </View>
+                <Text style={styles.miniCardLabel}>
+                  {getTimeDifferenceString(alarm.date, now)}
+                </Text>
               </View>
-              <Text style={styles.miniCardLabel}>Em breve</Text>
-            </View>
-
-            {/* Mini Card 2 */}
-            <View style={styles.miniCard} accessible={true} accessibilityLabel="Lembrete marcado para as 22:00">
-              <View style={styles.miniCardLeft}>
-                <View style={[styles.miniBadgeDot, { backgroundColor: '#CBD5E1' }]} />
-                <Text style={styles.miniCardTime}>22:00</Text>
-              </View>
-              <Text style={styles.miniCardLabel}>Em Breve</Text>
-            </View>
-
+            ))}
           </View>
         </View>
       </ScrollView>
@@ -170,7 +224,7 @@ const styles = StyleSheet.create({
   cardBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#E6F7F4', // Fundo levemente verde para destacar ser o próximo
+    backgroundColor: '#E6F7F4', 
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 12,
@@ -185,7 +239,7 @@ const styles = StyleSheet.create({
   cardBadgeText: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#00A88F', // Cor verde para destaque
+    color: '#00A88F', 
   },
   cardCenter: {
     alignItems: 'center',
@@ -211,7 +265,7 @@ const styles = StyleSheet.create({
   },
   queueContainer: {
     marginTop: 24,
-    gap: 12, // Espaçamento entre os mini cards
+    gap: 12, 
   },
   queueTitle: {
     fontSize: 15,
@@ -242,11 +296,11 @@ const styles = StyleSheet.create({
   miniCardTime: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#334155', // Cinza mais escuro, mas não tanto quanto o principal
+    color: '#334155', 
   },
   miniCardLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#94A3B8', // Cinza mais claro para reduzir a carga cognitiva
+    color: '#94A3B8', 
   },
 });
