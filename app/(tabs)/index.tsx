@@ -1,7 +1,7 @@
 import { View, ScrollView, StyleSheet, useColorScheme } from 'react-native'
 import { colors } from '@/lib/constants/colors'
 import { HomeHeader } from '@/components/home/HomeHeader'
-import { DailyProgressCard } from '@/components/home/DailyProgressCard'
+import { PainelRotinaDiaria } from '@/components/home/PainelRotinaDiaria'
 import { RecentMeasurements } from '@/components/home/RecentMeasurements'
 import type { HealthMeasurement } from '@/types/domain'
 
@@ -27,10 +27,11 @@ export default function HomeScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <DailyProgressCard
-          completed={dailyProgress.completed}
-          total={dailyProgress.total}
-          nextReminderTime={dailyProgress.nextReminderTime}
+        <PainelRotinaDiaria
+          diasSeguidos={12}
+          afericoesFeitas={dailyProgress.completed}
+          afericoesTotais={dailyProgress.total}
+          horarioProxima={dailyProgress.nextReminderTime}
         />
         <RecentMeasurements
           measurements={measurements}
