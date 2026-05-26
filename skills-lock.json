@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "skills": {
+    "brandkit": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/brandkit/SKILL.md",
+      "computedHash": "735007879f5110aeae1e981a53fe74a12afde70347f9773dacd50e4697a091bf"
+    },
+    "firecrawl": {
+      "source": "firecrawl-cli",
+      "sourceType": "global",
+      "skillPath": ".agents/skills/firecrawl/SKILL.md",
+      "computedHash": "8bfa4bcfff96decff2a9b72de88cdc982d0d607ec5f0ed1642af589f547536c3"
+    },
+    "firecrawl-deep-research": {
+      "source": "firecrawl-cli",
+      "sourceType": "global",
+      "skillPath": ".agents/skills/firecrawl-deep-research/SKILL.md",
+      "computedHash": "620710eaa4a4cec486173512605565d6eb32eb52f463f8a3d72b88ddda03dcdb"
+    },
+    "firecrawl-scrape": {
+      "source": "firecrawl-cli",
+      "sourceType": "global",
+      "skillPath": ".agents/skills/firecrawl-scrape/SKILL.md",
+      "computedHash": "03ab9d0db6da955d4849d23107ece74143de200e67b47386ab762f478dd10faf"
+    },
+    "firecrawl-search": {
+      "source": "firecrawl-cli",
+      "sourceType": "global",
+      "skillPath": ".agents/skills/firecrawl-search/SKILL.md",
+      "computedHash": "7a00205479a2e731b518bb17e23727c1ef29617a6589f64106c2409cc681977e"
+    },
+    "firecrawl-website-design-clone": {
+      "source": "firecrawl-cli",
+      "sourceType": "global",
+      "skillPath": ".agents/skills/firecrawl-website-design-clone/SKILL.md",
+      "computedHash": "1671ca241a339ed0516e7cc48b3aee7511dc2dd1f2641ee19633fd85e2579d9c"
+    },
+    "firecrawl-workflows": {
+      "source": "firecrawl-cli",
+      "sourceType": "global",
+      "skillPath": ".agents/skills/firecrawl-workflows/SKILL.md",
+      "computedHash": "75198a0e1ee5712cdd87918537d15329c224e7b959c660f1beb4e6d94e979958"
+    },
+    "full-output-enforcement": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/full-output-enforcement/SKILL.md",
+      "computedHash": "524f7c7950c3fde726101613f630140411c7d080e63be718687f4b38f919be81"
+    },
+    "high-end-visual-design": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/high-end-visual-design/SKILL.md",
+      "computedHash": "f730e4132775f13eea19e3dc39afc6bb453cfc0498872b127ad8f0d47cfd802d"
+    },
+    "image-to-code": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/image-to-code/SKILL.md",
+      "computedHash": "3d2ac14d956fdafc5500d2108b90895e134d847f9f199e7f1d18bf1f814cf7c8"
+    },
+    "imagegen-frontend-mobile": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/imagegen-frontend-mobile/SKILL.md",
+      "computedHash": "7c1d1dc59cd0df4063b8621af543bf5dea1d576b261507e17b0323c69680b048"
+    },
+    "minimalist-ui": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/minimalist-ui/SKILL.md",
+      "computedHash": "7e88897e0371184e97a82b8d9ef080323c13f21eb067b58ef71eb05173a08ac2"
+    }
+  }
+}

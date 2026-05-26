@@ -1,0 +1,37 @@
+{
+  "expo": {
+    "name": "VigidocApp",
+    "slug": "vigidocapp",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "scheme": "vigidocapp",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.vigidoc.app"
+    },
+    "android": {
+      "package": "com.vigidoc.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#002959",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "@sentry/react-native"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
