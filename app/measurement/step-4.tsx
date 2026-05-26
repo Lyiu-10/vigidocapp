@@ -28,7 +28,8 @@ export default function Step4Screen() {
   const value        = useMeasurementStore((s) => s.value)
   const systolic     = useMeasurementStore((s) => s.systolic)
   const diastolic    = useMeasurementStore((s) => s.diastolic)
-  const reset        = useMeasurementStore((s) => s.reset)
+  const resetCurrent = useMeasurementStore((s) => s.resetCurrent)
+  const markCompleted= useMeasurementStore((s) => s.markCompleted)
 
   useEffect(() => {
     if (!selectedType) router.replace('/measurement/step-1')
@@ -44,8 +45,9 @@ export default function Step4Screen() {
 
   function handleSave() {
     // TODO: enviar para API via React Query mutation quando disponível
-    reset()
-    router.replace({ pathname: '/(tabs)/', params: { saved: 'true' } })
+    markCompleted()
+    resetCurrent()
+    router.replace('/measurement/step-1')
   }
 
   return (

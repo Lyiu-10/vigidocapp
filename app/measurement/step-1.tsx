@@ -5,10 +5,11 @@ import {
   ScrollView,
   Pressable,
   useColorScheme,
+  Alert,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router } from 'expo-router'
-import { X, ChevronRight } from 'lucide-react-native'
+import { X, ChevronRight, CheckCircle2 } from 'lucide-react-native'
 import { colors } from '@/lib/constants/colors'
 import { MEASUREMENT_CONFIG, MEASUREMENT_TYPE_LIST } from '@/lib/constants/measurementTypes'
 import { useMeasurementStore } from '@/store/measurement.store'
@@ -20,6 +21,8 @@ const DARK = { bg: '#0F172A', card: '#1E293B', text: '#FFFFFF' } as const
 export default function Step1Screen() {
   const isDark  = useColorScheme() === 'dark'
   const setType = useMeasurementStore((s) => s.setType)
+  const completed = useMeasurementStore((s) => s.completed)
+  const resetSession = useMeasurementStore((s) => s.resetSession)
 
   const bgColor   = isDark ? DARK.bg   : colors.iceBlue
   const textColor = isDark ? DARK.text : colors.navy
@@ -29,6 +32,29 @@ export default function Step1Screen() {
     router.push('/measurement/step-2')
   }
 
+  function handleClose() {
+    if (completed.length > 0) {
+      Alert.alert(
+        'Sair sem finalizar?',
+        'Você já preencheu alguns dados. Se sair agora, essas informações não serão salvas na sua rotina. Deseja sair mesmo assim?',
+        [
+          { text: 'Não', style: 'cancel' },
+          { text: 'Sim, Sair', style: 'destructive', onPress: () => { resetSession(); router.replace('/(tabs)/') } }
+        ]
+      )
+    } else {
+      router.replace('/(tabs)/')
+    }
+  }
+
+  const allCompleted = completed.length === MEASUREMENT_TYPE_LIST.length
+
+  function handleFinish() {
+    if (!allCompleted) return
+    resetSession()
+    router.replace({ pathname: '/(tabs)/', params: { saved: 'true' } })
+  }
+
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: bgColor }]}>
 
@@ -36,7 +62,7 @@ export default function Step1Screen() {
       <View style={styles.header}>
         <Pressable
           style={({ pressed }) => [styles.iconBtn, pressed && { opacity: 0.7 }]}
-          onPress={() => router.back()}
+          onPress={handleClose}
           accessibilityLabel="Fechar Nova Medição"
           accessibilityRole="button"
         >
@@ -58,6 +84,7 @@ export default function Step1Screen() {
       >
         {MEASUREMENT_TYPE_LIST.map((type) => {
           const config = MEASUREMENT_CONFIG[type]
+          const isCompleted = completed.includes(type)
           return (
             <Pressable
               key={type}
@@ -83,11 +110,32 @@ export default function Step1Screen() {
                 <Text style={styles.cardUnit}>{config.unit}</Text>
               </View>
 
-              <ChevronRight size={18} color={colors.placeholder} strokeWidth={2} />
+              {isCompleted ? (
+                <CheckCircle2 size={22} color={colors.esmeralda} strokeWidth={2} />
+              ) : (
+                <ChevronRight size={18} color={colors.placeholder} strokeWidth={2} />
+              )}
             </Pressable>
           )
         })}
       </ScrollView>
+
+      {/* Footer */}
+      <View style={styles.footer}>
+        <Pressable
+          style={({ pressed }) => [
+            styles.cta,
+            !allCompleted && styles.ctaDisabled,
+            pressed && allCompleted && styles.ctaPressed,
+          ]}
+          onPress={handleFinish}
+          disabled={!allCompleted}
+          accessibilityRole="button"
+          accessibilityLabel="Finalizar"
+        >
+          <Text style={[styles.ctaText, !allCompleted && styles.ctaTextDisabled]}>Finalizar</Text>
+        </Pressable>
+      </View>
 
     </SafeAreaView>
   )
@@ -160,6 +208,33 @@ const styles = StyleSheet.create({
   },
   cardUnit: {
     fontSize: 13,
+    color: colors.placeholder,
+  },
+
+  footer: {
+    paddingHorizontal: 20,
+    paddingBottom: 24,
+    paddingTop: 12,
+  },
+  cta: {
+    backgroundColor: colors.esmeralda,
+    height: 56,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  ctaDisabled: {
+    backgroundColor: colors.border,
+  },
+  ctaPressed: {
+    opacity: 0.85,
+  },
+  ctaText: {
+    fontSize: 17,
+    fontWeight: '700',
+    color: colors.navy,
+  },
+  ctaTextDisabled: {
     color: colors.placeholder,
   },
 })

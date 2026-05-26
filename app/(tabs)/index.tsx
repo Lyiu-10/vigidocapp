@@ -3,6 +3,8 @@ import { colors } from '@/lib/constants/colors'
 import { HomeHeader } from '@/components/home/HomeHeader'
 import { PainelRotinaDiaria } from '@/components/home/PainelRotinaDiaria'
 import { RecentMeasurements } from '@/components/home/RecentMeasurements'
+import { ProfileBottomSheet } from '@/components/shared/ProfileBottomSheet'
+import { useState } from 'react'
 import type { HealthMeasurement } from '@/types/domain'
 
 // Dark mode — mover para colors.ts quando sistema de temas for formalizado
@@ -10,6 +12,7 @@ const DARK_BG = '#0F172A'
 
 export default function HomeScreen() {
   const isDark = useColorScheme() === 'dark'
+  const [profileVisible, setProfileVisible] = useState(false)
 
   // TODO: substituir por React Query quando API estiver disponível
   const userName      = 'Pedro Rikelme'
@@ -21,7 +24,7 @@ export default function HomeScreen() {
       <HomeHeader
         userName={userName}
         measurementCount={dailyProgress.completed}
-        onAvatarPress={() => {}} // TODO: abrir ProfileBottomSheet quando for extraído de AppHeader
+        onAvatarPress={() => setProfileVisible(true)}
       />
       <ScrollView
         contentContainerStyle={styles.scrollContent}
@@ -39,6 +42,16 @@ export default function HomeScreen() {
           onRefresh={() => {}}
         />
       </ScrollView>
+
+      <ProfileBottomSheet
+        visible={profileVisible}
+        onClose={() => setProfileVisible(false)}
+        userName={userName}
+        userEmail="pedro@email.com"
+        currentTheme={isDark ? 'dark' : 'light'}
+        onThemeChange={() => {}} // TODO: link com sistema de tema real
+        onSettingsPress={() => {}}
+      />
     </View>
   )
 }
