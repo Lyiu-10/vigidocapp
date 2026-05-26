@@ -61,6 +61,7 @@ export default function LoginScreen() {
 
           <TouchableOpacity
             style={styles.forgotWrap}
+            onPress={() => router.push('/forgot-password')}
             accessibilityLabel="Recuperar senha"
             accessibilityRole="button"
           >
@@ -79,6 +80,7 @@ export default function LoginScreen() {
           <View style={styles.signupRow}>
             <Text style={styles.signupLabel}>Ainda não tem conta? </Text>
             <TouchableOpacity
+              onPress={() => router.push('/register')}
               accessibilityLabel="Criar conta"
               accessibilityRole="button"
             >

@@ -1,45 +1,52 @@
-import { View, Text, StyleSheet } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { View, ScrollView, StyleSheet, useColorScheme } from 'react-native'
+import { colors } from '@/lib/constants/colors'
+import { HomeHeader } from '@/components/home/HomeHeader'
+import { DailyProgressCard } from '@/components/home/DailyProgressCard'
+import { RecentMeasurements } from '@/components/home/RecentMeasurements'
+import type { HealthMeasurement } from '@/types/domain'
 
-// TODO: Implementar tela Home conforme direção em project.md
-// Estrutura:
-// 1. Header — Navy #002959, avatar, saudação "Bom dia, [Nome]"
-// 2. CTA Principal — botão Esmeralda "Registrar Nova Medição"
-// 3. Card "Seu Acompanhamento" — 7 círculos semanais
-// 4. Seção "Últimas Aferições" — cards com valor, unidade, status dot
+// Dark mode — mover para colors.ts quando sistema de temas for formalizado
+const DARK_BG = '#0F172A'
 
 export default function HomeScreen() {
+  const isDark = useColorScheme() === 'dark'
+
+  // TODO: substituir por React Query quando API estiver disponível
+  const userName      = 'Pedro Rikelme'
+  const dailyProgress = { completed: 0, total: 3, nextReminderTime: '22:00' }
+  const measurements: HealthMeasurement[] = []
+
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>VigidocApp</Text>
-      </View>
-      <View style={styles.content}>
-        <Text style={styles.placeholder}>Tela Home — em construção</Text>
-      </View>
-    </SafeAreaView>
+    <View style={[styles.container, { backgroundColor: isDark ? DARK_BG : colors.iceBlue }]}>
+      <HomeHeader
+        userName={userName}
+        measurementCount={dailyProgress.completed}
+        onAvatarPress={() => {}} // TODO: abrir ProfileBottomSheet quando for extraído de AppHeader
+      />
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <DailyProgressCard
+          completed={dailyProgress.completed}
+          total={dailyProgress.total}
+          nextReminderTime={dailyProgress.nextReminderTime}
+        />
+        <RecentMeasurements
+          measurements={measurements}
+          isLoading={false}
+          onRefresh={() => {}}
+        />
+      </ScrollView>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FFFFFF' },
-  header: {
-    backgroundColor: '#002959',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-  },
-  headerText: {
-    color: '#FFFFFF',
-    fontSize: 22,
-    fontWeight: '700',
-  },
-  content: {
+  container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
-  placeholder: {
-    fontSize: 16,
-    color: '#002959',
+  scrollContent: {
+    paddingBottom: 100,
   },
 })

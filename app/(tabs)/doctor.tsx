@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { colors } from '@/lib/constants/colors'
 
 // TODO: Implementar tela Meu Médico
 export default function DoctorScreen() {
@@ -13,7 +14,7 @@ export default function DoctorScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FFFFFF' },
+  container: { flex: 1, backgroundColor: colors.white },
   content: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  placeholder: { fontSize: 16, color: '#002959' },
+  placeholder: { fontSize: 16, color: colors.navy },
 })
