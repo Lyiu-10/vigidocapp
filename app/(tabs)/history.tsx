@@ -5,7 +5,6 @@ import {
   StyleSheet,
   ScrollView,
   Pressable,
-  FlatList,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import {
@@ -25,8 +24,8 @@ import type { MeasurementType, HealthStatus } from '@/types/domain'
 
 /* ─────────────────────── Tokens de Cor ─────────────────────── */
 
-const NAVY        = '#004B87'
-const NAVY_LIGHT  = '#0A6F97'
+const NAVY        = colors.navy       // #002959 — mesmo do HomeHeader
+const NAVY_BADGE  = '#0A6F97'
 const BG          = '#F8FAFC'
 const CARD_BG     = '#FFFFFF'
 const TEXT_PRIMARY = '#1E293B'
@@ -159,8 +158,8 @@ export default function HistoryScreen() {
   const [expandedId, setExpandedId]     = useState<string | null>('2') // 2º card pré-expandido p/ demo
 
   // Resumo semântico (calculados a partir do mock)
-  const allVitals     = MOCK_RECORDS.flatMap((r) => r.vitals)
-  const totalCount    = allVitals.length
+  const allVitals      = MOCK_RECORDS.flatMap((r) => r.vitals)
+  const totalCount     = allVitals.length
   const attentionCount = allVitals.filter((v) => v.status === 'attention').length
   const criticalCount  = allVitals.filter((v) => v.status === 'critical').length
 
@@ -169,179 +168,194 @@ export default function HistoryScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
-
-      {/* ──────── 1. Header Seguro e Acolhedor ──────── */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle} allowFontScaling={true}>
-          Histórico
-        </Text>
-        <View style={styles.cloudBadge}>
-          <CloudCheck size={14} color="#FFFFFF" strokeWidth={2} />
-          <Text style={styles.cloudText} allowFontScaling={true}>
-            Sincronizado e salvo na nuvem
-          </Text>
-        </View>
-      </View>
+    <View style={styles.safe}>
+      {/* Fundo navy atrás da SafeArea (status bar) */}
+      <SafeAreaView style={{ backgroundColor: NAVY }} edges={['top']} />
 
       <ScrollView
-        style={styles.scrollBody}
+        style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* ──────── 2. Filtros + Exportar ──────── */}
-        <View style={styles.filterRow}>
-          <View style={styles.pillGroup}>
-            {FILTERS.map((f) => {
-              const isActive = activeFilter === f.key
-              return (
-                <Pressable
-                  key={f.key}
-                  style={[styles.pill, isActive && styles.pillActive]}
-                  onPress={() => setActiveFilter(f.key)}
-                  accessibilityRole="button"
-                  accessibilityLabel={`Filtrar por ${f.label}`}
-                  accessibilityState={{ selected: isActive }}
-                >
-                  <Text
-                    style={[styles.pillText, isActive && styles.pillTextActive]}
-                    allowFontScaling={true}
+        {/* ──────── 1. Header navy (dentro do scroll) ──────── */}
+        <View style={styles.header}>
+          <Text style={styles.headerTitle} allowFontScaling={true}>
+            Histórico
+          </Text>
+
+          <View style={styles.cloudBadge}>
+            <CloudCheck size={14} color="#FFFFFF" strokeWidth={2} />
+            <Text style={styles.cloudText} allowFontScaling={true}>
+              Sincronizado e salvo na nuvem
+            </Text>
+          </View>
+
+          {/* Filtros + Exportar — dentro da área azul */}
+          <View style={styles.filterRow}>
+            <View style={styles.pillGroup}>
+              {FILTERS.map((f) => {
+                const isActive = activeFilter === f.key
+                return (
+                  <Pressable
+                    key={f.key}
+                    style={[styles.pill, isActive && styles.pillActive]}
+                    onPress={() => setActiveFilter(f.key)}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Filtrar por ${f.label}`}
+                    accessibilityState={{ selected: isActive }}
                   >
-                    {f.label}
-                  </Text>
-                </Pressable>
-              )
-            })}
-          </View>
-
-          <Pressable
-            style={({ pressed }) => [styles.exportBtn, pressed && { opacity: 0.7 }]}
-            accessibilityRole="button"
-            accessibilityLabel="Exportar histórico em PDF"
-          >
-            <FileDown size={16} color={NAVY} strokeWidth={2} />
-            <Text style={styles.exportText} allowFontScaling={true}>
-              Exportar PDF
-            </Text>
-          </Pressable>
-        </View>
-
-        {/* ──────── 3. Barra de Resumo Semântico ──────── */}
-        <View style={styles.summaryRow}>
-          <View style={styles.summaryBlock}>
-            <Text style={[styles.summaryValue, { color: TEXT_PRIMARY }]} allowFontScaling={true}>
-              {totalCount}
-            </Text>
-            <Text style={styles.summaryLabel} allowFontScaling={true}>
-              Medições
-            </Text>
-          </View>
-          <View style={[styles.summaryDivider]} />
-          <View style={styles.summaryBlock}>
-            <Text style={[styles.summaryValue, { color: ORANGE }]} allowFontScaling={true}>
-              {attentionCount}
-            </Text>
-            <Text style={styles.summaryLabel} allowFontScaling={true}>
-              Atenção
-            </Text>
-          </View>
-          <View style={[styles.summaryDivider]} />
-          <View style={styles.summaryBlock}>
-            <Text style={[styles.summaryValue, { color: RED }]} allowFontScaling={true}>
-              {criticalCount}
-            </Text>
-            <Text style={styles.summaryLabel} allowFontScaling={true}>
-              Críticos
-            </Text>
-          </View>
-        </View>
-
-        {/* ──────── 4. Cards Diários ──────── */}
-        {MOCK_RECORDS.map((record) => {
-          const isExpanded = expandedId === record.id
-          return (
-            <View key={record.id} style={styles.dayCard}>
-              {/* Header do Card */}
-              <Pressable
-                style={styles.dayCardHeader}
-                onPress={() => toggleCard(record.id)}
-                accessibilityRole="button"
-                accessibilityLabel={`${record.date}, medido às ${record.time}. ${isExpanded ? 'Toque para recolher' : 'Toque para expandir'}`}
-                accessibilityState={{ expanded: isExpanded }}
-              >
-                <View style={styles.dayCardLeft}>
-                  <Text style={styles.dayCardDate} allowFontScaling={true}>
-                    {record.date}
-                  </Text>
-                  <Text style={styles.dayCardTime} allowFontScaling={true}>
-                    Medido às {record.time}
-                  </Text>
-                </View>
-                {isExpanded
-                  ? <ChevronUp   size={22} color={TEXT_MUTED} strokeWidth={2} />
-                  : <ChevronDown size={22} color={TEXT_MUTED} strokeWidth={2} />
-                }
-              </Pressable>
-
-              {/* Conteúdo expandido — Grid 2x2 */}
-              {isExpanded && (
-                <View style={styles.vitalsGrid}>
-                  {record.vitals.map((vital) => {
-                    const info    = TYPE_ICON[vital.type]
-                    const label   = TYPE_LABEL[vital.type]
-                    const unit    = TYPE_UNIT[vital.type]
-                    const valColor = statusColor(vital.status)
-
-                    return (
-                      <View key={vital.type} style={styles.vitalCell}>
-                        {/* Rótulo com emoji */}
-                        <Text style={styles.vitalLabel} allowFontScaling={true}>
-                          {info.emoji} {label}
-                        </Text>
-                        {/* Valor */}
-                        <Text
-                          style={[styles.vitalValue, { color: valColor }]}
-                          allowFontScaling={true}
-                          numberOfLines={0}
-                        >
-                          {vital.value}
-                        </Text>
-                        {/* Unidade */}
-                        <Text style={styles.vitalUnit} allowFontScaling={true}>
-                          {unit}
-                        </Text>
-                      </View>
-                    )
-                  })}
-                </View>
-              )}
+                    <Text
+                      style={[styles.pillText, isActive && styles.pillTextActive]}
+                      allowFontScaling={true}
+                    >
+                      {f.label}
+                    </Text>
+                  </Pressable>
+                )
+              })}
             </View>
-          )
-        })}
 
-        {/* Espaço inferior para não colar no tab bar */}
-        <View style={{ height: 32 }} />
+            <Pressable
+              style={({ pressed }) => [styles.exportBtn, pressed && { opacity: 0.7 }]}
+              accessibilityRole="button"
+              accessibilityLabel="Exportar histórico em PDF"
+            >
+              <FileDown size={16} color="#FFFFFF" strokeWidth={2} />
+              <Text style={styles.exportText} allowFontScaling={true}>
+                Exportar PDF
+              </Text>
+            </Pressable>
+          </View>
+        </View>
+
+        {/* ──────── Zona de transição (fundo cinza, card sobe com marginTop negativo) ──────── */}
+        <View style={styles.bodyZone}>
+
+          {/* ──────── 3. Barra de Resumo — overlap card ──────── */}
+          <View style={styles.summaryRow}>
+            <View style={styles.summaryBlock}>
+              <Text style={[styles.summaryValue, { color: TEXT_PRIMARY }]} allowFontScaling={true}>
+                {totalCount}
+              </Text>
+              <Text style={styles.summaryLabel} allowFontScaling={true}>
+                Medições
+              </Text>
+            </View>
+            <View style={styles.summaryDivider} />
+            <View style={styles.summaryBlock}>
+              <Text style={[styles.summaryValue, { color: ORANGE }]} allowFontScaling={true}>
+                {attentionCount}
+              </Text>
+              <Text style={styles.summaryLabel} allowFontScaling={true}>
+                Atenção
+              </Text>
+            </View>
+            <View style={styles.summaryDivider} />
+            <View style={styles.summaryBlock}>
+              <Text style={[styles.summaryValue, { color: RED }]} allowFontScaling={true}>
+                {criticalCount}
+              </Text>
+              <Text style={styles.summaryLabel} allowFontScaling={true}>
+                Críticos
+              </Text>
+            </View>
+          </View>
+
+          {/* ──────── 4. Cards Diários ──────── */}
+          {MOCK_RECORDS.map((record) => {
+            const isExpanded = expandedId === record.id
+            return (
+              <View key={record.id} style={styles.dayCard}>
+                {/* Header do Card */}
+                <Pressable
+                  style={styles.dayCardHeader}
+                  onPress={() => toggleCard(record.id)}
+                  accessibilityRole="button"
+                  accessibilityLabel={`${record.date}, medido às ${record.time}. ${isExpanded ? 'Toque para recolher' : 'Toque para expandir'}`}
+                  accessibilityState={{ expanded: isExpanded }}
+                >
+                  <View style={styles.dayCardLeft}>
+                    <Text style={styles.dayCardDate} allowFontScaling={true}>
+                      {record.date}
+                    </Text>
+                    <Text style={styles.dayCardTime} allowFontScaling={true}>
+                      Medido às {record.time}
+                    </Text>
+                  </View>
+                  {isExpanded
+                    ? <ChevronUp   size={22} color={TEXT_MUTED} strokeWidth={2} />
+                    : <ChevronDown size={22} color={TEXT_MUTED} strokeWidth={2} />
+                  }
+                </Pressable>
+
+                {/* Conteúdo expandido — Grid 2x2 */}
+                {isExpanded && (
+                  <View style={styles.vitalsGrid}>
+                    {record.vitals.map((vital) => {
+                      const info     = TYPE_ICON[vital.type]
+                      const label    = TYPE_LABEL[vital.type]
+                      const unit     = TYPE_UNIT[vital.type]
+                      const valColor = statusColor(vital.status)
+
+                      return (
+                        <View key={vital.type} style={styles.vitalCell}>
+                          {/* Rótulo com emoji */}
+                          <Text style={styles.vitalLabel} allowFontScaling={true}>
+                            {info.emoji} {label}
+                          </Text>
+                          {/* Valor */}
+                          <Text
+                            style={[styles.vitalValue, { color: valColor }]}
+                            allowFontScaling={true}
+                            numberOfLines={0}
+                          >
+                            {vital.value}
+                          </Text>
+                          {/* Unidade */}
+                          <Text style={styles.vitalUnit} allowFontScaling={true}>
+                            {unit}
+                          </Text>
+                        </View>
+                      )
+                    })}
+                  </View>
+                )}
+              </View>
+            )
+          })}
+
+          {/* Espaço inferior para não colar no tab bar */}
+          <View style={{ height: 32 }} />
+        </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   )
 }
 
 /* ═══════════════ ESTILOS ═══════════════ */
 
 const styles = StyleSheet.create({
-  /* ── Safe area ── */
+  /* ── Container raiz ── */
   safe: {
     flex: 1,
     backgroundColor: BG,
   },
 
-  /* ── 1. Header ── */
+  /* ── ScrollView ── */
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    // Sem paddingTop — o header faz isso
+  },
+
+  /* ── 1. Header (azul escuro, dentro do scroll) ── */
   header: {
     backgroundColor: NAVY,
     paddingHorizontal: 20,
     paddingTop: 8,
-    paddingBottom: 20,
-    gap: 10,
+    paddingBottom: 48,               // Ajustado para 48px para conexão mais elegante
+    gap: 16,                         // Aumentado o gap para separar melhor os elementos internos
   },
   headerTitle: {
     fontSize: 28,
@@ -353,7 +367,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'flex-start',
-    backgroundColor: NAVY_LIGHT,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)', // Fundo azul/branco translúcido
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
@@ -366,21 +380,12 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
 
-  /* ── Scroll body ── */
-  scrollBody: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-  },
-
-  /* ── 2. Filtros + Exportar ── */
+  /* ── 2. Filtros + Exportar (dentro do header azul) ── */
   filterRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 16,
+    marginTop: 4,
   },
   pillGroup: {
     flexDirection: 'row',
@@ -390,25 +395,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: '#E2E8F0',
+    backgroundColor: 'rgba(255,255,255,0.15)',
   },
   pillActive: {
-    backgroundColor: NAVY,
+    backgroundColor: '#FFFFFF',
   },
   pillText: {
     fontSize: 14,
     fontWeight: '700',
-    color: TEXT_MUTED,
+    color: 'rgba(255,255,255,0.7)',
   },
   pillTextActive: {
-    color: '#FFFFFF',
+    color: NAVY,
   },
   exportBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
     borderWidth: 1.5,
-    borderColor: NAVY,
+    borderColor: 'rgba(255,255,255,0.5)',
     borderRadius: 10,
     paddingHorizontal: 12,
     paddingVertical: 8,
@@ -416,22 +421,30 @@ const styles = StyleSheet.create({
   exportText: {
     fontSize: 13,
     fontWeight: '700',
-    color: NAVY,
+    color: '#FFFFFF',
   },
 
-  /* ── 3. Resumo Semântico ── */
+  /* ── Zona do corpo (fundo cinza) ── */
+  bodyZone: {
+    backgroundColor: BG,
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+  },
+
+  /* ── 3. Resumo Semântico — overlap card ── */
   summaryRow: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: CARD_BG,
     borderRadius: 14,
     paddingVertical: 16,
+    marginTop: -28,                  // ← Overlap refinado (-28px)
     marginBottom: 20,
     shadowColor: '#002959',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 8,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 4,
   },
   summaryBlock: {
     flex: 1,

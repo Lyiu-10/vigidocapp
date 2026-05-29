@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ShieldCheck } from 'lucide-react-native';
+import { colors } from '@/lib/constants/colors';
+
+const NAVY = colors.navy;  // #002959 — mesmo do HomeHeader
+const BG   = '#F8FAFC';
 
 const SCHEDULED_TIMES = ['08:00', '14:00', '22:00'];
 
@@ -64,118 +68,146 @@ export default function NotificationsScreen() {
   const queueAlarms = occurrences.slice(1);
 
   return (
-    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
+    <View style={styles.container}>
+      {/* Fundo navy atrás da SafeArea (status bar) */}
+      <SafeAreaView style={{ backgroundColor: NAVY }} edges={['top']} />
+
       <ScrollView 
         showsVerticalScrollIndicator={false}
+        style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
       >
-        {/* 1. Header da Tela */}
+        {/* ──────── Header navy (dentro do scroll) ──────── */}
         <View style={styles.header}>
           <Text style={styles.title} accessible={true} accessibilityRole="header">
             Notificações
           </Text>
-        </View>
 
-        {/* 2. Banner de Segurança do Sistema */}
-        <View 
-          style={styles.securityBanner}
-          accessible={true}
-          accessibilityRole="text"
-          accessibilityLabel="Sistema operando normalmente. Seus lembretes estão ativos e precisos."
-        >
-          <ShieldCheck size={24} color="#004B87" />
-          <Text style={styles.securityText}>
-            Sistema operando normalmente. Seus lembretes estão ativos e precisos.
-          </Text>
-        </View>
-
-        {/* 3. Seção "Agenda de Hoje" */}
-        <View style={styles.agendaSection}>
-          <View style={styles.agendaHeader}>
-            <Text style={styles.agendaTitle}>Lembretes agendados</Text>
-            <View style={styles.badge} accessible={true} accessibilityLabel={`${SCHEDULED_TIMES.length} lembretes programados`}>
-              <Text style={styles.badgeText}>{SCHEDULED_TIMES.length} lembretes</Text>
-            </View>
+          {/* 2. Banner de Segurança — agora dentro do Header */}
+          <View 
+            style={styles.securityBanner}
+            accessible={true}
+            accessibilityRole="text"
+            accessibilityLabel="Sistema operando normalmente. Seus lembretes estão ativos e precisos."
+          >
+            <ShieldCheck size={24} color="#00A88F" />
+            <Text style={styles.securityText}>
+              Sistema operando normalmente. Seus lembretes estão ativos e precisos.
+            </Text>
           </View>
+        </View>
 
-          {/* 4. Card de Lembrete Principal (O mais próximo) */}
-          <View style={styles.reminderCard}>
-            <View style={styles.cardTopLine}>
-              <Text style={styles.cardTopTitle}>Próxima aferição</Text>
-              <View style={styles.cardBadge}>
-                <View style={styles.badgeDot} />
-                <Text style={styles.cardBadgeText}>Em destaque</Text>
+        {/* ──────── Zona de transição (fundo cinza) ──────── */}
+        <View style={styles.bodyZone}>
+
+          {/* 3. Seção "Agenda de Hoje" com overlap */}
+          <View style={styles.agendaSection}>
+            <View style={styles.agendaHeader}>
+              <Text style={styles.agendaTitle}>Lembretes agendados</Text>
+              <View style={styles.badge} accessible={true} accessibilityLabel={`${SCHEDULED_TIMES.length} lembretes programados`}>
+                <Text style={styles.badgeText}>{SCHEDULED_TIMES.length} lembretes</Text>
               </View>
             </View>
 
-            <View style={styles.cardCenter} accessible={true} accessibilityLabel={`Lembrete principal marcado para as ${mainAlarm.timeStr}`}>
-              <Text style={styles.timeGiant}>{mainAlarm.timeStr}</Text>
-            </View>
-
-            <View style={styles.cardBottomPill}>
-              <Text style={styles.cardBottomText}>
-                {getTimeDifferenceString(mainAlarm.date, now)}
-              </Text>
-            </View>
-          </View>
-
-          {/* 5. Fila de Próximos Horários (Mini Cards) */}
-          <View style={styles.queueContainer}>
-            <Text style={styles.queueTitle}>Próximos horários na fila:</Text>
-
-            {queueAlarms.map((alarm, index) => (
-              <View key={index} style={styles.miniCard} accessible={true} accessibilityLabel={`Lembrete marcado para as ${alarm.timeStr}`}>
-                <View style={styles.miniCardLeft}>
-                  <View style={[styles.miniBadgeDot, { backgroundColor: '#CBD5E1' }]} />
-                  <Text style={styles.miniCardTime}>{alarm.timeStr}</Text>
+            {/* 4. Card de Lembrete Principal (O mais próximo) */}
+            <View style={styles.reminderCard}>
+              <View style={styles.cardTopLine}>
+                <Text style={styles.cardTopTitle}>Próxima aferição</Text>
+                <View style={styles.cardBadge}>
+                  <View style={styles.badgeDot} />
+                  <Text style={styles.cardBadgeText}>Em destaque</Text>
                 </View>
-                <Text style={styles.miniCardLabel}>
-                  {getTimeDifferenceString(alarm.date, now)}
+              </View>
+
+              <View style={styles.cardCenter} accessible={true} accessibilityLabel={`Lembrete principal marcado para as ${mainAlarm.timeStr}`}>
+                <Text style={styles.timeGiant}>{mainAlarm.timeStr}</Text>
+              </View>
+
+              <View style={styles.cardBottomPill}>
+                <Text style={styles.cardBottomText}>
+                  {getTimeDifferenceString(mainAlarm.date, now)}
                 </Text>
               </View>
-            ))}
+            </View>
+
+            {/* 5. Fila de Próximos Horários (Mini Cards) */}
+            <View style={styles.queueContainer}>
+              <Text style={styles.queueTitle}>Próximos horários na fila:</Text>
+
+              {queueAlarms.map((alarm, index) => (
+                <View key={index} style={styles.miniCard} accessible={true} accessibilityLabel={`Lembrete marcado para as ${alarm.timeStr}`}>
+                  <View style={styles.miniCardLeft}>
+                    <View style={[styles.miniBadgeDot, { backgroundColor: '#CBD5E1' }]} />
+                    <Text style={styles.miniCardTime}>{alarm.timeStr}</Text>
+                  </View>
+                  <Text style={styles.miniCardLabel}>
+                    {getTimeDifferenceString(alarm.date, now)}
+                  </Text>
+                </View>
+              ))}
+            </View>
           </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: BG,
+  },
+
+  /* ── ScrollView ── */
+  scrollView: {
+    flex: 1,
   },
   scrollContent: {
+    // Sem paddingTop — o header faz isso
+  },
+
+  /* ── Header azul escuro (dentro do scroll) ── */
+  header: {
+    backgroundColor: NAVY,
     paddingHorizontal: 20,
     paddingTop: 16,
-    paddingBottom: 40,
-  },
-  header: {
-    marginBottom: 20,
+    paddingBottom: 24,                  // Ajustado para não ter mais o gap gigante
   },
   title: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: '800',
-    color: '#004B87',
+    color: '#FFFFFF',
+    letterSpacing: -0.5,
   },
+
+  /* ── Banner de segurança — dentro do header ── */
   securityBanner: {
-    backgroundColor: '#E6F7F4',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)', // translúcido para combinar
     borderRadius: 12,
     padding: 16,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
+    marginTop: 16,
   },
   securityText: {
     flex: 1,
     fontSize: 14,
-    color: '#004B87',
+    color: '#FFFFFF',
     fontWeight: '600',
     lineHeight: 20,
   },
+
+  /* ── Zona do corpo (fundo cinza) ── */
+  bodyZone: {
+    backgroundColor: BG,
+    paddingHorizontal: 20,
+    paddingBottom: 40,
+  },
+
   agendaSection: {
-    marginTop: 32,
+    marginTop: 24,                     // ← Removido o overlap negativo
   },
   agendaHeader: {
     flexDirection: 'row',
@@ -186,10 +218,10 @@ const styles = StyleSheet.create({
   agendaTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#475569',
+    color: '#475569', // Restaurado para a cor original
   },
   badge: {
-    backgroundColor: '#E2E8F0',
+    backgroundColor: '#E2E8F0', // Restaurado para a cor original
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
@@ -197,7 +229,7 @@ const styles = StyleSheet.create({
   badgeText: {
     fontSize: 13,
     fontWeight: '700',
-    color: '#334155',
+    color: '#334155', // Restaurado para a cor original
   },
   reminderCard: {
     backgroundColor: '#FFFFFF',
@@ -304,3 +336,4 @@ const styles = StyleSheet.create({
     color: '#94A3B8', 
   },
 });
+
