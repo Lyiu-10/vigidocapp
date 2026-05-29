@@ -9,23 +9,20 @@ import {
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router } from 'expo-router'
-import { X, ChevronRight, CheckCircle2 } from 'lucide-react-native'
+import { X, CheckCircle2 } from 'lucide-react-native'
 import { colors } from '@/lib/constants/colors'
 import { MEASUREMENT_CONFIG, MEASUREMENT_TYPE_LIST } from '@/lib/constants/measurementTypes'
 import { useMeasurementStore } from '@/store/measurement.store'
 import type { MeasurementType } from '@/types/domain'
 
-// Dark mode — mover para colors.ts quando sistema de temas for formalizado
-const DARK = { bg: '#0F172A', card: '#1E293B', text: '#FFFFFF' } as const
-
 export default function Step1Screen() {
-  const isDark  = useColorScheme() === 'dark'
+  const isDark = useColorScheme() === 'dark'
   const setType = useMeasurementStore((s) => s.setType)
   const completed = useMeasurementStore((s) => s.completed)
   const resetSession = useMeasurementStore((s) => s.resetSession)
 
-  const bgColor   = isDark ? DARK.bg   : colors.iceBlue
-  const textColor = isDark ? DARK.text : colors.navy
+  const bgColor = isDark ? '#0F172A' : '#F8FAFC'
+  const textColor = isDark ? '#FFFFFF' : '#004B87'
 
   function handleSelect(type: MeasurementType) {
     setType(type)
@@ -56,71 +53,80 @@ export default function Step1Screen() {
   }
 
   return (
-    <SafeAreaView style={[styles.safe, { backgroundColor: bgColor }]}>
-
-      {/* Header */}
-      <View style={styles.header}>
-        <Pressable
-          style={({ pressed }) => [styles.iconBtn, pressed && { opacity: 0.7 }]}
-          onPress={handleClose}
-          accessibilityLabel="Fechar Nova Medição"
-          accessibilityRole="button"
-        >
-          <X size={22} color={textColor} strokeWidth={2} />
-        </Pressable>
-        <Text style={styles.stepLabel}>1 de 4</Text>
-      </View>
-
-      {/* Título */}
-      <Text style={[styles.title, { color: textColor }]}>
-        O que vamos medir?
-      </Text>
-
-      {/* Lista vertical de tipos */}
-      <ScrollView
-        style={styles.list}
-        contentContainerStyle={styles.listContent}
+    <SafeAreaView style={[styles.safe, { backgroundColor: bgColor }]} edges={['top', 'left', 'right', 'bottom']}>
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {MEASUREMENT_TYPE_LIST.map((type) => {
-          const config = MEASUREMENT_CONFIG[type]
-          const isCompleted = completed.includes(type)
-          return (
-            <Pressable
-              key={type}
-              style={({ pressed }) => [
-                styles.card,
-                { backgroundColor: isDark ? DARK.card : colors.white },
-                pressed && { opacity: 0.82 },
-              ]}
-              onPress={() => handleSelect(type)}
-              accessibilityRole="button"
-              accessibilityLabel={config.label}
-            >
-              {/* Ícone com fundo colorido suave */}
-              <View style={[styles.iconWrap, { backgroundColor: config.color + '1A' }]}>
-                <config.Icon size={24} color={config.color} strokeWidth={2} />
-              </View>
+        {/* 1. Header */}
+        <View style={styles.header}>
+          <Pressable
+            style={({ pressed }) => [styles.iconBtn, pressed && { opacity: 0.7 }]}
+            onPress={handleClose}
+            accessibilityLabel="Fechar Nova Medição"
+            accessibilityRole="button"
+          >
+            <X size={24} color="#64748B" strokeWidth={2} />
+          </Pressable>
+          <Text style={styles.stepIndicator}>1 de 4</Text>
+        </View>
 
-              {/* Texto */}
-              <View style={styles.cardText}>
-                <Text style={[styles.cardLabel, { color: textColor }]}>
-                  {config.label}
-                </Text>
-                <Text style={styles.cardUnit}>{config.unit}</Text>
-              </View>
+        <Text style={[styles.title, { color: textColor }]} allowFontScaling={true}>
+          O que vamos medir?
+        </Text>
 
-              {isCompleted ? (
-                <CheckCircle2 size={22} color={colors.esmeralda} strokeWidth={2} />
-              ) : (
-                <ChevronRight size={18} color={colors.placeholder} strokeWidth={2} />
-              )}
-            </Pressable>
-          )
-        })}
+        {/* 2. Grid de Opções (Layout Palace) */}
+        <View style={styles.gridContainer}>
+          {MEASUREMENT_TYPE_LIST.map((type) => {
+            const config = MEASUREMENT_CONFIG[type]
+            const isCompleted = completed.includes(type)
+            
+            return (
+              <Pressable
+                key={type}
+                style={({ pressed }) => [
+                  styles.card,
+                  isDark ? { backgroundColor: '#1E293B' } : { backgroundColor: '#FFFFFF' },
+                  isCompleted && styles.cardCompleted,
+                  pressed && { opacity: 0.8 },
+                ]}
+                onPress={() => handleSelect(type)}
+                accessibilityRole="button"
+                accessibilityLabel={config.label}
+              >
+                {/* Ícone */}
+                <View style={[styles.iconWrap, { backgroundColor: config.color + '1A' }]}>
+                  <config.Icon size={32} color={config.color} strokeWidth={2} />
+                  {isCompleted && (
+                    <View style={styles.checkBadge}>
+                      <CheckCircle2 size={18} color="#FFFFFF" fill={colors.esmeralda} />
+                    </View>
+                  )}
+                </View>
+
+                {/* Textos empilhados */}
+                <View style={styles.cardTextContainer}>
+                  <Text 
+                    style={[styles.cardTitle, { color: textColor }]} 
+                    numberOfLines={0} 
+                    allowFontScaling={true}
+                  >
+                    {config.label}
+                  </Text>
+                  <Text 
+                    style={styles.cardUnit}
+                    allowFontScaling={true}
+                  >
+                    {config.unit}
+                  </Text>
+                </View>
+              </Pressable>
+            )
+          })}
+        </View>
       </ScrollView>
 
-      {/* Footer */}
+      {/* 4. Botão Inferior */}
       <View style={styles.footer}>
         <Pressable
           style={({ pressed }) => [
@@ -131,100 +137,123 @@ export default function Step1Screen() {
           onPress={handleFinish}
           disabled={!allCompleted}
           accessibilityRole="button"
-          accessibilityLabel="Finalizar"
+          accessibilityLabel="Finalizar medições"
         >
           <Text style={[styles.ctaText, !allCompleted && styles.ctaTextDisabled]}>Finalizar</Text>
         </Pressable>
       </View>
-
     </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1 },
-
+  safe: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 40,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 12,
-    paddingTop: 4,
-    height: 56,
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    marginBottom: 16,
   },
   iconBtn: {
-    width: 48,
-    height: 48,
+    width: 44,
+    height: 44,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#F1F5F9', // Fundo sutil para o X
+    borderRadius: 22,
   },
-  stepLabel: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: colors.placeholder,
-    paddingRight: 8,
-  },
-
-  title: {
-    fontSize: 22,
+  stepIndicator: {
+    fontSize: 15,
     fontWeight: '700',
-    paddingHorizontal: 20,
-    paddingBottom: 20,
-    letterSpacing: -0.3,
+    color: '#64748B',
   },
-
-  list: { flex: 1 },
-  listContent: {
+  title: {
+    fontSize: 28,
+    fontWeight: '800',
     paddingHorizontal: 20,
-    paddingBottom: 32,
-    gap: 10,
+    marginBottom: 24,
+    letterSpacing: -0.5,
   },
-
-  card: {
+  gridContainer: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingHorizontal: 20,
+    gap: 16,
+    justifyContent: 'space-between',
+  },
+  card: {
+    width: '47%', // Aprox 47% da tela, deixando espaço pro gap
+    minHeight: 140, // Altura flexível que cresce se a fonte for grande
+    borderRadius: 16,
+    padding: 16,
     alignItems: 'center',
-    borderRadius: 14,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    gap: 14,
-    shadowColor: colors.navy,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
+    justifyContent: 'flex-start',
+    shadowColor: '#002959',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.04,
+    shadowRadius: 10,
     elevation: 2,
+    borderWidth: 1,
+    borderColor: '#F1F5F9',
+  },
+  cardCompleted: {
+    borderColor: '#D1FAE5', // Borda verde suave se estiver completo
+    backgroundColor: '#F0FDF4',
   },
   iconWrap: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 16,
   },
-  cardText: { flex: 1 },
-  cardLabel: {
+  checkBadge: {
+    position: 'absolute',
+    bottom: -4,
+    right: -4,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+  },
+  cardTextContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+  },
+  cardTitle: {
     fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 2,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginBottom: 6,
+    lineHeight: 22,
   },
   cardUnit: {
     fontSize: 13,
-    color: colors.placeholder,
+    fontWeight: '600',
+    color: '#94A3B8',
+    textAlign: 'center',
   },
-
   footer: {
     paddingHorizontal: 20,
-    paddingBottom: 24,
-    paddingTop: 12,
+    paddingVertical: 16,
+    backgroundColor: '#F8FAFC', // Combina com o fundo geral
   },
   cta: {
     backgroundColor: colors.esmeralda,
     height: 56,
-    borderRadius: 14,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
   },
   ctaDisabled: {
-    backgroundColor: colors.border,
+    backgroundColor: '#E2E8F0',
   },
   ctaPressed: {
     opacity: 0.85,
@@ -232,9 +261,9 @@ const styles = StyleSheet.create({
   ctaText: {
     fontSize: 17,
     fontWeight: '700',
-    color: colors.navy,
+    color: '#004B87',
   },
   ctaTextDisabled: {
-    color: colors.placeholder,
+    color: '#94A3B8',
   },
 })
