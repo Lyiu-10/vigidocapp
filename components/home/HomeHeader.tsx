@@ -58,31 +58,33 @@ export function HomeHeader({ userName, onAvatarPress, measurementCount }: HomeHe
     <View style={[styles.container, { paddingTop: insets.top + 16 }]}>
 
       {/* Linha de saudação + avatar */}
-      <TutorialHighlight tourId="home" stepIndex={0} borderRadius={12}>
-        <View style={styles.row}>
-          <View style={styles.textCol}>
-            <Text style={styles.greeting} numberOfLines={1}>
-              {greeting}
-            </Text>
-            <Text style={styles.subtitle}>
-              {timeStr} · {measurementLabel}
-            </Text>
-          </View>
-
-          <HelpButton tourId="home" />
-
-          <Pressable
-            style={({ pressed }) => [styles.avatarTouchable, pressed && { opacity: 0.8 }]}
-            onPress={onAvatarPress}
-            accessibilityLabel="Abrir perfil"
-            accessibilityRole="button"
-          >
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>{initials}</Text>
+      <View style={styles.row}>
+        <View style={styles.textCol}>
+          <TutorialHighlight tourId="home" stepIndex={0} borderRadius={8}>
+            <View style={{ gap: 4 }}>
+              <Text style={styles.greeting} numberOfLines={1}>
+                {greeting}
+              </Text>
+              <Text style={styles.subtitle}>
+                {timeStr} · {measurementLabel}
+              </Text>
             </View>
-          </Pressable>
+          </TutorialHighlight>
         </View>
-      </TutorialHighlight>
+
+        <HelpButton tourId="home" />
+
+        <Pressable
+          style={({ pressed }) => [styles.avatarTouchable, pressed && { opacity: 0.8 }]}
+          onPress={onAvatarPress}
+          accessibilityLabel="Abrir perfil"
+          accessibilityRole="button"
+        >
+          <View style={styles.avatar}>
+            <Text style={styles.avatarText}>{initials}</Text>
+          </View>
+        </Pressable>
+      </View>
 
       {/* CTA principal — visualmente faz parte do header (mesmo fundo navy) */}
       <TutorialHighlight tourId="home" stepIndex={1} borderRadius={14}>
