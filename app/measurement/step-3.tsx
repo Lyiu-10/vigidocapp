@@ -17,6 +17,7 @@ import {
   VALIDATION_RANGES,
 } from '@/lib/constants/measurementTypes'
 import { useMeasurementStore } from '@/store/measurement.store'
+import { TutorialHighlight } from '@/components/shared/TutorialHighlight'
 import type { MeasurementType } from '@/types/domain'
 
 const DARK = { bg: '#0F172A', text: '#FFFFFF' } as const
@@ -96,6 +97,7 @@ export default function Step3Screen() {
         </View>
 
         {/* Campos de entrada */}
+        <TutorialHighlight tourId="measurement" stepIndex={2} borderRadius={12}>
         {isBloodPressure ? (
           // Pressão arterial: dois campos lado a lado
           <View style={styles.bpWrapper}>
@@ -154,6 +156,8 @@ export default function Step3Screen() {
             returnKeyType="done"
           />
         )}
+
+        </TutorialHighlight>
 
         {/* Unidade */}
         <Text style={styles.unit}>{config.unit}</Text>

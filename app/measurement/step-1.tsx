@@ -9,10 +9,14 @@ import {
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router } from 'expo-router'
+import { useEffect } from 'react'
 import { X, CheckCircle2 } from 'lucide-react-native'
 import { colors } from '@/lib/constants/colors'
 import { MEASUREMENT_CONFIG, MEASUREMENT_TYPE_LIST } from '@/lib/constants/measurementTypes'
 import { useMeasurementStore } from '@/store/measurement.store'
+import { useTutorialStore } from '@/store/tutorial.store'
+import { TutorialHighlight } from '@/components/shared/TutorialHighlight'
+import { HelpButton } from '@/components/shared/HelpButton'
 import type { MeasurementType } from '@/types/domain'
 
 export default function Step1Screen() {
@@ -20,6 +24,18 @@ export default function Step1Screen() {
   const setType = useMeasurementStore((s) => s.setType)
   const completed = useMeasurementStore((s) => s.completed)
   const resetSession = useMeasurementStore((s) => s.resetSession)
+
+  const _hydrated                 = useTutorialStore((s) => s._hydrated)
+  const measurementTourCompleted  = useTutorialStore((s) => s.measurementTourCompleted)
+  const startTour                 = useTutorialStore((s) => s.startTour)
+
+  useEffect(() => {
+    if (!_hydrated) return
+    if (!measurementTourCompleted) {
+      const timer = setTimeout(() => startTour('measurement'), 600)
+      return () => clearTimeout(timer)
+    }
+  }, [_hydrated])
 
   const bgColor = isDark ? '#0F172A' : '#F8FAFC'
   const textColor = isDark ? '#FFFFFF' : '#004B87'
@@ -54,77 +70,80 @@ export default function Step1Screen() {
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: bgColor }]} edges={['top', 'left', 'right', 'bottom']}>
-      <ScrollView 
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* 1. Header */}
-        <View style={styles.header}>
-          <Pressable
-            style={({ pressed }) => [styles.iconBtn, pressed && { opacity: 0.7 }]}
-            onPress={handleClose}
-            accessibilityLabel="Fechar Nova Medição"
-            accessibilityRole="button"
-          >
-            <X size={24} color="#64748B" strokeWidth={2} />
-          </Pressable>
-          <Text style={styles.stepIndicator}>1 de 4</Text>
-        </View>
+      <TutorialHighlight tourId="measurement" stepIndex={0} borderRadius={14}>
+        <ScrollView 
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* 1. Header */}
+          <View style={styles.header}>
+            <Pressable
+              style={({ pressed }) => [styles.iconBtn, pressed && { opacity: 0.7 }]}
+              onPress={handleClose}
+              accessibilityLabel="Fechar Nova Medição"
+              accessibilityRole="button"
+            >
+              <X size={24} color="#64748B" strokeWidth={2} />
+            </Pressable>
+            <Text style={styles.stepIndicator}>1 de 4</Text>
+            <HelpButton tourId="measurement" />
+          </View>
 
-        <Text style={[styles.title, { color: textColor }]} allowFontScaling={true}>
-          O que vamos medir?
-        </Text>
+          <Text style={[styles.title, { color: textColor }]} allowFontScaling={true}>
+            O que vamos medir?
+          </Text>
 
-        {/* 2. Grid de Opções (Layout Palace) */}
-        <View style={styles.gridContainer}>
-          {MEASUREMENT_TYPE_LIST.map((type) => {
-            const config = MEASUREMENT_CONFIG[type]
-            const isCompleted = completed.includes(type)
-            
-            return (
-              <Pressable
-                key={type}
-                style={({ pressed }) => [
-                  styles.card,
-                  isDark ? { backgroundColor: '#1E293B' } : { backgroundColor: '#FFFFFF' },
-                  isCompleted && styles.cardCompleted,
-                  pressed && { opacity: 0.8 },
-                ]}
-                onPress={() => handleSelect(type)}
-                accessibilityRole="button"
-                accessibilityLabel={config.label}
-              >
-                {/* Ícone */}
-                <View style={[styles.iconWrap, { backgroundColor: config.color + '1A' }]}>
-                  <config.Icon size={32} color={config.color} strokeWidth={2} />
-                  {isCompleted && (
-                    <View style={styles.checkBadge}>
-                      <CheckCircle2 size={18} color="#FFFFFF" fill={colors.esmeralda} />
-                    </View>
-                  )}
-                </View>
+          {/* 2. Grid de Opções (Layout Palace) */}
+          <View style={styles.gridContainer}>
+            {MEASUREMENT_TYPE_LIST.map((type) => {
+              const config = MEASUREMENT_CONFIG[type]
+              const isCompleted = completed.includes(type)
+              
+              return (
+                <Pressable
+                  key={type}
+                  style={({ pressed }) => [
+                    styles.card,
+                    isDark ? { backgroundColor: '#1E293B' } : { backgroundColor: '#FFFFFF' },
+                    isCompleted && styles.cardCompleted,
+                    pressed && { opacity: 0.8 },
+                  ]}
+                  onPress={() => handleSelect(type)}
+                  accessibilityRole="button"
+                  accessibilityLabel={config.label}
+                >
+                  {/* Ícone */}
+                  <View style={[styles.iconWrap, { backgroundColor: config.color + '1A' }]}>
+                    <config.Icon size={32} color={config.color} strokeWidth={2} />
+                    {isCompleted && (
+                      <View style={styles.checkBadge}>
+                        <CheckCircle2 size={18} color="#FFFFFF" fill={colors.esmeralda} />
+                      </View>
+                    )}
+                  </View>
 
-                {/* Textos empilhados */}
-                <View style={styles.cardTextContainer}>
-                  <Text 
-                    style={[styles.cardTitle, { color: textColor }]} 
-                    numberOfLines={0} 
-                    allowFontScaling={true}
-                  >
-                    {config.label}
-                  </Text>
-                  <Text 
-                    style={styles.cardUnit}
-                    allowFontScaling={true}
-                  >
-                    {config.unit}
-                  </Text>
-                </View>
-              </Pressable>
-            )
-          })}
-        </View>
-      </ScrollView>
+                  {/* Textos empilhados */}
+                  <View style={styles.cardTextContainer}>
+                    <Text 
+                      style={[styles.cardTitle, { color: textColor }]} 
+                      numberOfLines={0} 
+                      allowFontScaling={true}
+                    >
+                      {config.label}
+                    </Text>
+                    <Text 
+                      style={styles.cardUnit}
+                      allowFontScaling={true}
+                    >
+                      {config.unit}
+                    </Text>
+                  </View>
+                </Pressable>
+              )
+            })}
+          </View>
+        </ScrollView>
+      </TutorialHighlight>
 
       {/* 4. Botão Inferior */}
       <View style={styles.footer}>

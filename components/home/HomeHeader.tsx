@@ -4,6 +4,8 @@ import { Plus } from 'lucide-react-native'
 import { useState, useEffect } from 'react'
 import { router } from 'expo-router'
 import { colors } from '@/lib/constants/colors'
+import { HelpButton } from '@/components/shared/HelpButton'
+import { TutorialHighlight } from '@/components/shared/TutorialHighlight'
 
 // Azul claro suave sobre navy — especificado no design mas sem token equivalente em colors.ts
 const SUBTITLE_COLOR = '#B0C4DE'
@@ -56,38 +58,44 @@ export function HomeHeader({ userName, onAvatarPress, measurementCount }: HomeHe
     <View style={[styles.container, { paddingTop: insets.top + 16 }]}>
 
       {/* Linha de saudação + avatar */}
-      <View style={styles.row}>
-        <View style={styles.textCol}>
-          <Text style={styles.greeting} numberOfLines={1}>
-            {greeting}
-          </Text>
-          <Text style={styles.subtitle}>
-            {timeStr} · {measurementLabel}
-          </Text>
-        </View>
-
-        <Pressable
-          style={({ pressed }) => [styles.avatarTouchable, pressed && { opacity: 0.8 }]}
-          onPress={onAvatarPress}
-          accessibilityLabel="Abrir perfil"
-          accessibilityRole="button"
-        >
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>{initials}</Text>
+      <TutorialHighlight tourId="home" stepIndex={0} borderRadius={12}>
+        <View style={styles.row}>
+          <View style={styles.textCol}>
+            <Text style={styles.greeting} numberOfLines={1}>
+              {greeting}
+            </Text>
+            <Text style={styles.subtitle}>
+              {timeStr} · {measurementLabel}
+            </Text>
           </View>
-        </Pressable>
-      </View>
+
+          <HelpButton tourId="home" />
+
+          <Pressable
+            style={({ pressed }) => [styles.avatarTouchable, pressed && { opacity: 0.8 }]}
+            onPress={onAvatarPress}
+            accessibilityLabel="Abrir perfil"
+            accessibilityRole="button"
+          >
+            <View style={styles.avatar}>
+              <Text style={styles.avatarText}>{initials}</Text>
+            </View>
+          </Pressable>
+        </View>
+      </TutorialHighlight>
 
       {/* CTA principal — visualmente faz parte do header (mesmo fundo navy) */}
-      <Pressable
-        style={({ pressed }) => [styles.cta, pressed && styles.ctaPressed]}
-        onPress={() => router.push('/measurement/step-1')}
-        accessibilityRole="button"
-        accessibilityLabel="Registrar nova medição"
-      >
-        <Plus size={20} color={colors.navy} strokeWidth={2.5} />
-        <Text style={styles.ctaText}>Registrar medição</Text>
-      </Pressable>
+      <TutorialHighlight tourId="home" stepIndex={1} borderRadius={14}>
+        <Pressable
+          style={({ pressed }) => [styles.cta, pressed && styles.ctaPressed]}
+          onPress={() => router.push('/measurement/step-1')}
+          accessibilityRole="button"
+          accessibilityLabel="Registrar nova medição"
+        >
+          <Plus size={20} color={colors.navy} strokeWidth={2.5} />
+          <Text style={styles.ctaText}>Registrar medição</Text>
+        </Pressable>
+      </TutorialHighlight>
 
     </View>
   )

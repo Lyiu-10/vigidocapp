@@ -13,6 +13,7 @@ import { ArrowLeft, CheckCircle } from 'lucide-react-native'
 import { colors } from '@/lib/constants/colors'
 import { MEASUREMENT_CONFIG } from '@/lib/constants/measurementTypes'
 import { useMeasurementStore } from '@/store/measurement.store'
+import { TutorialHighlight } from '@/components/shared/TutorialHighlight'
 
 const DARK = { bg: '#0F172A', text: '#FFFFFF' } as const
 
@@ -60,20 +61,22 @@ export default function Step2Screen() {
         </View>
 
         {/* Instruções */}
-        <View style={styles.instructionList}>
-          {config.instructions.map((instruction, i) => (
-            <View key={i} style={styles.instructionRow}>
-              <CheckCircle
-                size={18}
-                color={colors.esmeralda}
-                strokeWidth={2}
-              />
-              <Text style={[styles.instructionText, { color: textColor }]}>
-                {instruction}
-              </Text>
-            </View>
-          ))}
-        </View>
+        <TutorialHighlight tourId="measurement" stepIndex={1} borderRadius={16}>
+          <View style={styles.instructionList}>
+            {config.instructions.map((instruction, i) => (
+              <View key={i} style={styles.instructionRow}>
+                <CheckCircle
+                  size={18}
+                  color={colors.esmeralda}
+                  strokeWidth={2}
+                />
+                <Text style={[styles.instructionText, { color: textColor }]}>
+                  {instruction}
+                </Text>
+              </View>
+            ))}
+          </View>
+        </TutorialHighlight>
       </ScrollView>
 
       {/* CTA */}

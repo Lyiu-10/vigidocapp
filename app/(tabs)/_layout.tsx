@@ -1,10 +1,15 @@
 import { Tabs } from 'expo-router'
 import { BottomTabBar } from '@/components/shared/BottomTabBar'
+import { TutorialHighlight } from '@/components/shared/TutorialHighlight'
 
 export default function TabsLayout() {
   return (
     <Tabs
-      tabBar={(props) => <BottomTabBar {...props} unreadNotifications={0} />}
+      tabBar={(props) => (
+        <TutorialHighlight tourId="home" stepIndex={3} borderRadius={0}>
+          <BottomTabBar {...props} unreadNotifications={0} />
+        </TutorialHighlight>
+      )}
       screenOptions={{ headerShown: false }}
     >
       <Tabs.Screen

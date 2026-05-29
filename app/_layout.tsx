@@ -1,10 +1,12 @@
 import { useEffect } from 'react'
+import { View } from 'react-native'
 import { Stack, useRouter } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { secureStorage } from '@/lib/storage/secureStorage'
+import { TutorialOverlay } from '@/components/shared/TutorialOverlay'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -21,8 +23,11 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <QueryClientProvider client={queryClient}>
-          <StatusBar style="light" backgroundColor="#002959" />
-          <RootNavigator />
+          <View style={{ flex: 1 }}>
+            <StatusBar style="light" backgroundColor="#002959" />
+            <RootNavigator />
+            <TutorialOverlay />
+          </View>
         </QueryClientProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
