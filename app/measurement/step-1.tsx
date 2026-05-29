@@ -9,20 +9,36 @@ import {
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router } from 'expo-router'
+import { useEffect } from 'react'
 import { X, ChevronRight, CheckCircle2 } from 'lucide-react-native'
 import { colors } from '@/lib/constants/colors'
 import { MEASUREMENT_CONFIG, MEASUREMENT_TYPE_LIST } from '@/lib/constants/measurementTypes'
 import { useMeasurementStore } from '@/store/measurement.store'
+import { useTutorialStore } from '@/store/tutorial.store'
+import { TutorialHighlight } from '@/components/shared/TutorialHighlight'
+import { HelpButton } from '@/components/shared/HelpButton'
 import type { MeasurementType } from '@/types/domain'
 
 // Dark mode — mover para colors.ts quando sistema de temas for formalizado
 const DARK = { bg: '#0F172A', card: '#1E293B', text: '#FFFFFF' } as const
 
 export default function Step1Screen() {
-  const isDark  = useColorScheme() === 'dark'
-  const setType = useMeasurementStore((s) => s.setType)
-  const completed = useMeasurementStore((s) => s.completed)
+  const isDark       = useColorScheme() === 'dark'
+  const setType      = useMeasurementStore((s) => s.setType)
+  const completed    = useMeasurementStore((s) => s.completed)
   const resetSession = useMeasurementStore((s) => s.resetSession)
+
+  const _hydrated                 = useTutorialStore((s) => s._hydrated)
+  const measurementTourCompleted  = useTutorialStore((s) => s.measurementTourCompleted)
+  const startTour                 = useTutorialStore((s) => s.startTour)
+
+  useEffect(() => {
+    if (!_hydrated) return
+    if (!measurementTourCompleted) {
+      const timer = setTimeout(() => startTour('measurement'), 600)
+      return () => clearTimeout(timer)
+    }
+  }, [_hydrated])
 
   const bgColor   = isDark ? DARK.bg   : colors.iceBlue
   const textColor = isDark ? DARK.text : colors.navy
@@ -69,6 +85,7 @@ export default function Step1Screen() {
           <X size={22} color={textColor} strokeWidth={2} />
         </Pressable>
         <Text style={styles.stepLabel}>1 de 4</Text>
+        <HelpButton tourId="measurement" />
       </View>
 
       {/* Título */}
@@ -77,6 +94,7 @@ export default function Step1Screen() {
       </Text>
 
       {/* Lista vertical de tipos */}
+      <TutorialHighlight tourId="measurement" stepIndex={0} borderRadius={14}>
       <ScrollView
         style={styles.list}
         contentContainerStyle={styles.listContent}
@@ -119,6 +137,7 @@ export default function Step1Screen() {
           )
         })}
       </ScrollView>
+      </TutorialHighlight>
 
       {/* Footer */}
       <View style={styles.footer}>
