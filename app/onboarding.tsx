@@ -45,7 +45,7 @@ const SLIDES: SlideData[] = [
   {
     id: '2',
     icon: Activity,
-    iconColor: colors.ceruleanDeep,
+    iconColor: colors.cerulean,
     iconFilled: false,
     illustrationBg: '#D6EBF5',
     title: 'Registre suas medições',
@@ -84,8 +84,8 @@ export default function OnboardingScreen() {
   }
 
   async function completeOnboarding() {
-    await secureStorage.set('onboarding_seen', 'true')
-    router.replace('/login')
+    await secureStorage.set('onboarding_completed', 'true')
+    router.replace('/(tabs)')
   }
 
   function handleNext() {
@@ -100,9 +100,6 @@ export default function OnboardingScreen() {
     <SafeAreaView style={styles.safe}>
       {/* ── Logo ── */}
       <View style={styles.logoRow}>
-        <View style={styles.logoIconWrap}>
-          <Activity size={14} color={colors.esmeralda} strokeWidth={2.5} />
-        </View>
         <Text style={styles.logoText}>
           Vigi<Text style={styles.logoTextBold}>Doc</Text>
         </Text>
@@ -246,13 +243,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.navy,
   },
   cta: {
-    backgroundColor: colors.esmeralda,
+    backgroundColor: colors.cerulean,
     height: 56,
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    shadowColor: colors.esmeralda,
+    shadowColor: colors.cerulean,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
     shadowRadius: 8,
@@ -263,7 +260,7 @@ const styles = StyleSheet.create({
     transform: [{ scale: 0.99 }],
   },
   ctaText: {
-    color: colors.navy,
+    color: colors.white,
     fontSize: 18,
     fontWeight: '700',
     letterSpacing: 0.2,

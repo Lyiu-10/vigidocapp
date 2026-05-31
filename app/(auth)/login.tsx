@@ -3,7 +3,6 @@ import {
   Text,
   StyleSheet,
   KeyboardAvoidingView,
-  TouchableOpacity,
   Pressable,
   Modal,
 } from 'react-native'
@@ -13,12 +12,20 @@ import { useState } from 'react'
 import { Activity, HelpCircle, X } from 'lucide-react-native'
 import { colors } from '@/lib/constants/colors'
 import { Input } from '@/components/ui/Input'
+import { secureStorage } from '@/lib/storage/secureStorage'
 
 export default function LoginScreen() {
   const [helpVisible, setHelpVisible] = useState(false)
 
-  const handleLogin = () => {
-    router.replace('/')
+  const handleLogin = async () => {
+    // TODO: substituir pela chamada real à API
+    await secureStorage.set('auth_token', 'token_placeholder')
+    const onboardingDone = await secureStorage.get('onboarding_completed')
+    if (onboardingDone !== 'true') {
+      router.replace('/onboarding')
+    } else {
+      router.replace('/(tabs)')
+    }
   }
 
   return (
@@ -28,9 +35,6 @@ export default function LoginScreen() {
         {/* ── Logo ── */}
         <View style={styles.hero}>
           <View style={styles.logoRow}>
-            <View style={styles.logoIconWrap}>
-              <Activity size={18} color={colors.esmeralda} strokeWidth={2.5} />
-            </View>
             <Text style={styles.logoText}>
               Vigi<Text style={styles.logoTextBold}>Doc</Text>
             </Text>
@@ -59,14 +63,14 @@ export default function LoginScreen() {
             />
           </View>
 
-          <TouchableOpacity
-            style={styles.forgotWrap}
+          <Pressable
+            style={({ pressed }) => [styles.forgotWrap, pressed && { opacity: 0.7 }]}
             onPress={() => router.push('/forgot-password')}
             accessibilityLabel="Recuperar senha"
             accessibilityRole="button"
           >
             <Text style={styles.forgotText}>Esqueci minha senha</Text>
-          </TouchableOpacity>
+          </Pressable>
 
           <Pressable
             style={({ pressed }) => [styles.cta, pressed && styles.ctaPressed]}
@@ -79,24 +83,25 @@ export default function LoginScreen() {
 
           <View style={styles.signupRow}>
             <Text style={styles.signupLabel}>Ainda não tem conta? </Text>
-            <TouchableOpacity
+            <Pressable
               onPress={() => router.push('/register')}
               accessibilityLabel="Criar conta"
               accessibilityRole="button"
+              style={({ pressed }) => [pressed && { opacity: 0.7 }]}
             >
               <Text style={styles.signupLink}>Cadastre-se</Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
 
-          <TouchableOpacity
-            style={styles.helpButton}
+          <Pressable
+            style={({ pressed }) => [styles.helpButton, pressed && { opacity: 0.7 }]}
             onPress={() => setHelpVisible(true)}
             accessibilityLabel="Abrir ajuda"
             accessibilityRole="button"
           >
             <HelpCircle size={15} color={colors.placeholder} strokeWidth={2} />
             <Text style={styles.helpText}>Precisa de ajuda?</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
 
       </KeyboardAvoidingView>
@@ -114,14 +119,14 @@ export default function LoginScreen() {
 
             <View style={styles.helpHeader}>
               <Text style={styles.helpTitle}>Como posso ajudar?</Text>
-              <TouchableOpacity
+              <Pressable
                 onPress={() => setHelpVisible(false)}
-                style={styles.closeButton}
+                style={({ pressed }) => [styles.closeButton, pressed && { opacity: 0.7 }]}
                 accessibilityLabel="Fechar ajuda"
                 accessibilityRole="button"
               >
                 <X size={20} color={colors.navy} />
-              </TouchableOpacity>
+              </Pressable>
             </View>
 
             <View style={styles.helpSection}>
@@ -188,6 +193,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
+    borderWidth: 1,
+    borderColor: colors.sandy + '55',
     paddingHorizontal: 24,
     paddingTop: 32,
     paddingBottom: 40,
@@ -220,18 +227,18 @@ const styles = StyleSheet.create({
   forgotText: {
     fontSize: 14,
     fontWeight: '600',
-    color: colors.ceruleanDeep,
+    color: colors.cerulean,
   },
 
   // CTA
   cta: {
-    backgroundColor: colors.esmeralda,
+    backgroundColor: colors.cerulean,
     height: 56,
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 20,
-    shadowColor: colors.esmeralda,
+    shadowColor: colors.cerulean,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
     shadowRadius: 8,
@@ -242,7 +249,7 @@ const styles = StyleSheet.create({
     transform: [{ scale: 0.99 }],
   },
   ctaText: {
-    color: colors.navy,
+    color: colors.white,
     fontSize: 18,
     fontWeight: '700',
     letterSpacing: 0.2,
@@ -262,7 +269,7 @@ const styles = StyleSheet.create({
   },
   signupLink: {
     fontSize: 14,
-    color: colors.ceruleanDeep,
+    color: colors.cerulean,
     fontWeight: '700',
   },
 
@@ -332,7 +339,7 @@ const styles = StyleSheet.create({
   helpSectionText: {
     fontSize: 14,
     fontWeight: '400',
-    color: colors.ceruleanDeep,
+    color: colors.cerulean,
     lineHeight: 21,
   },
   helpDivider: {

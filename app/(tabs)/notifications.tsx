@@ -83,18 +83,7 @@ export default function NotificationsScreen() {
             Notificações
           </Text>
 
-          {/* 2. Banner de Segurança — agora dentro do Header */}
-          <View 
-            style={styles.securityBanner}
-            accessible={true}
-            accessibilityRole="text"
-            accessibilityLabel="Sistema operando normalmente. Seus lembretes estão ativos e precisos."
-          >
-            <ShieldCheck size={24} color="#00A88F" />
-            <Text style={styles.securityText}>
-              Sistema operando normalmente. Seus lembretes estão ativos e precisos.
-            </Text>
-          </View>
+
         </View>
 
         {/* ──────── Zona de transição (fundo cinza) ──────── */}
@@ -113,10 +102,7 @@ export default function NotificationsScreen() {
             <View style={styles.reminderCard}>
               <View style={styles.cardTopLine}>
                 <Text style={styles.cardTopTitle}>Próxima aferição</Text>
-                <View style={styles.cardBadge}>
-                  <View style={styles.badgeDot} />
-                  <Text style={styles.cardBadgeText}>Em destaque</Text>
-                </View>
+
               </View>
 
               <View style={styles.cardCenter} accessible={true} accessibilityLabel={`Lembrete principal marcado para as ${mainAlarm.timeStr}`}>
@@ -241,7 +227,7 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 3,
     borderWidth: 1,
-    borderColor: '#F1F5F9',
+    borderColor: colors.sandy + '55',
   },
   cardTopLine: {
     flexDirection: 'row',
@@ -313,7 +299,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: colors.sandy + '55',
   },
   miniCardLeft: {
     flexDirection: 'row',

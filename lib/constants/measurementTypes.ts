@@ -21,7 +21,7 @@ export const MEASUREMENT_CONFIG: Record<MeasurementType, MeasurementTypeConfig> 
     label: 'Pressão Arterial',
     unit:  'mmHg',
     Icon:  Activity,
-    color: colors.ceruleanDeep,
+    color: colors.cerulean,
     instructions: [
       'Sente-se e descanse por 5 minutos',
       'Apoie o braço na altura do coração',

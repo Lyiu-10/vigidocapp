@@ -17,6 +17,7 @@ import {
   VALIDATION_RANGES,
 } from '@/lib/constants/measurementTypes'
 import { useMeasurementStore } from '@/store/measurement.store'
+import { useTutorialStore } from '@/store/tutorial.store'
 import { TutorialHighlight } from '@/components/shared/TutorialHighlight'
 import type { MeasurementType } from '@/types/domain'
 
@@ -38,6 +39,7 @@ export default function Step3Screen() {
   const setValue     = useMeasurementStore((s) => s.setValue)
   const setSystolic  = useMeasurementStore((s) => s.setSystolic)
   const setDiastolic = useMeasurementStore((s) => s.setDiastolic)
+  const { currentStep, activeTour, nextStep } = useTutorialStore()
 
   const [focused, setFocused] = useState<'main' | 'sys' | 'dia' | null>(null)
 
@@ -60,10 +62,13 @@ export default function Step3Screen() {
     : isOutOfRange(selectedType, value)
 
   function borderColor(field: typeof focused) {
-    return focused === field ? colors.ceruleanDeep : colors.border
+    return focused === field ? colors.cerulean : colors.border
   }
 
   function handleConfirm() {
+    if (activeTour === 'measurement_input' && currentStep === 0) {
+      nextStep(1)
+    }
     router.push('/measurement/step-4')
   }
 
@@ -97,7 +102,7 @@ export default function Step3Screen() {
         </View>
 
         {/* Campos de entrada */}
-        <TutorialHighlight tourId="measurement" stepIndex={2} borderRadius={12}>
+        <TutorialHighlight tourId="measurement_input" stepIndex={0} borderRadius={12}>
         {isBloodPressure ? (
           // Pressão arterial: dois campos lado a lado
           <View style={styles.bpWrapper}>
@@ -300,7 +305,7 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   cta: {
-    backgroundColor: colors.esmeralda,
+    backgroundColor: colors.cerulean,
     height: 56,
     borderRadius: 14,
     alignItems: 'center',
@@ -311,6 +316,6 @@ const styles = StyleSheet.create({
   ctaText: {
     fontSize: 17,
     fontWeight: '700',
-    color: colors.navy,
+    color: colors.white,
   },
 })

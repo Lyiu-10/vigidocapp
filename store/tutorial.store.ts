@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { secureStorage } from '@/lib/storage/secureStorage'
 
-export type TourId = 'home' | 'measurement'
+export type TourId = 'home' | 'measurement' | 'measurement_input'
 
 export interface LayoutRect {
   x: number
@@ -15,6 +15,7 @@ interface TutorialState {
   _hydrated: boolean
   homeTourCompleted: boolean
   measurementTourCompleted: boolean
+  measurementInputTourCompleted: boolean
   activeTour: TourId | null
   currentStep: number
   layouts: Partial<Record<string, LayoutRect>>
@@ -31,6 +32,7 @@ export const useTutorialStore = create<TutorialState>()(
       _hydrated: false,
       homeTourCompleted: false,
       measurementTourCompleted: false,
+      measurementInputTourCompleted: false,
       activeTour: null,
       currentStep: 0,
       layouts: {},
@@ -50,6 +52,10 @@ export const useTutorialStore = create<TutorialState>()(
                 state.activeTour === 'measurement'
                   ? true
                   : state.measurementTourCompleted,
+              measurementInputTourCompleted:
+                state.activeTour === 'measurement_input'
+                  ? true
+                  : state.measurementInputTourCompleted,
             }
           }
           return { currentStep: next }
@@ -65,6 +71,10 @@ export const useTutorialStore = create<TutorialState>()(
             state.activeTour === 'measurement'
               ? true
               : state.measurementTourCompleted,
+          measurementInputTourCompleted:
+            state.activeTour === 'measurement_input'
+              ? true
+              : state.measurementInputTourCompleted,
         })),
 
       registerLayout: (tourId, stepIndex, rect) =>
@@ -93,6 +103,7 @@ export const useTutorialStore = create<TutorialState>()(
       partialize: (state) => ({
         homeTourCompleted: state.homeTourCompleted,
         measurementTourCompleted: state.measurementTourCompleted,
+        measurementInputTourCompleted: state.measurementInputTourCompleted,
       }),
       onRehydrateStorage: () => (_state, error) => {
         if (!error) {

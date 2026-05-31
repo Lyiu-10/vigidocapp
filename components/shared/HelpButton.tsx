@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: '700',
-    color: colors.ceruleanDeep,
+    color: colors.cerulean,
     lineHeight: 20,
   },
 })

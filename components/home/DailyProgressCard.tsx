@@ -42,8 +42,8 @@ export function DailyProgressCard({
 
   useEffect(() => {
     progress.value = withTiming(ratio, {
-      duration: 600,
-      easing: Easing.out(Easing.ease),
+      duration: 900,
+      easing: Easing.out(Easing.cubic),
     })
   }, [ratio])
 
@@ -55,17 +55,19 @@ export function DailyProgressCard({
     ? colors.placeholder
     : ratio >= 1
       ? colors.esmeralda
-      : colors.ceruleanDeep
+      : colors.cerulean
   const trackColor = isDark ? DARK.track : colors.border
   const textColor  = isDark ? DARK.text  : colors.navy
 
+  const isComplete = completed === total && total > 0
+
   let subtitle: string
-  if (completed === 0)       subtitle = 'Nenhuma medição registrada ainda'
-  else if (completed >= total) subtitle = 'Tudo certo por hoje! ✓'
-  else                         subtitle = `${completed} de ${total} medições realizadas`
+  if (completed === 0)       subtitle = 'Nenhuma medição registrada ainda.'
+  else if (completed >= total) subtitle = 'Todas as medições de hoje registradas.'
+  else                         subtitle = `${completed} de ${total} concluídas`
 
   return (
-    <View style={[styles.card, isDark && styles.cardDark]}>
+    <View style={[styles.card, isDark && styles.cardDark, isComplete && styles.cardComplete]}>
       <View style={styles.content}>
 
         {/* Anel de progresso */}
@@ -96,7 +98,7 @@ export function DailyProgressCard({
           </Svg>
           {/* Contador central */}
           <View style={styles.ringCenter}>
-            <Text style={[styles.ringLabel, { color: textColor }]}>
+            <Text style={[styles.ringCenterText, { color: textColor }]}>
               {completed}/{total}
             </Text>
           </View>
@@ -132,6 +134,8 @@ const styles = StyleSheet.create({
     padding: 20,
     marginHorizontal: 16,
     marginTop: 16,
+    borderWidth: 1,
+    borderColor: colors.sandy + '55',
     shadowColor: colors.navy,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
@@ -156,9 +160,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  ringLabel: {
-    fontSize: 14,
-    fontWeight: '700',
+  ringCenterText: {
+    fontSize: 18,
+    fontWeight: '800',
+    letterSpacing: -0.5,
   },
   textWrap: {
     flex: 1,
@@ -183,5 +188,9 @@ const styles = StyleSheet.create({
   reminderText: {
     fontSize: 12,
     color: colors.cerulean,
+  },
+  cardComplete: {
+    borderWidth: 1.5,
+    borderColor: colors.esmeralda + '60',
   },
 })

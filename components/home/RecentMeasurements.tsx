@@ -6,6 +6,8 @@ import Animated, {
   withSequence,
   withTiming,
   cancelAnimation,
+  FadeInDown,
+  useReducedMotion,
 } from 'react-native-reanimated'
 import { useEffect } from 'react'
 import {
@@ -22,7 +24,6 @@ import type { LucideIcon } from 'lucide-react-native'
 import { colors } from '@/lib/constants/colors'
 import type { HealthMeasurement, MeasurementType, HealthStatus } from '@/types/domain'
 
-// Dark mode — mover para colors.ts quando sistema de temas for formalizado
 const DARK = { cardBg: '#1E293B' } as const
 
 const TYPE_ICONS: Record<MeasurementType, LucideIcon> = {
@@ -43,16 +44,25 @@ const TYPE_LABELS: Record<MeasurementType, string> = {
   weight:            'Peso',
 }
 
+const TYPE_BG_COLORS: Record<MeasurementType, string> = {
+  blood_pressure:    colors.cerulean     + '20',
+  heart_rate:        colors.critical     + '18',
+  temperature:       colors.amber        + '20',
+  oxygen_saturation: colors.coolHorizon  + '22',
+  glucose:           colors.esmeralda    + '20',
+  weight:            colors.cerulean     + '20',
+}
+
 const STATUS_COLORS: Record<HealthStatus, string> = {
   normal:    colors.esmeralda,
   attention: colors.amber,
   critical:  colors.critical,
 }
 
-const STATUS_LABELS: Record<HealthStatus, string> = {
-  normal:    'normal',
-  attention: 'atenção',
-  critical:  'crítico',
+const STATUS_PILL_LABEL: Record<HealthStatus, string> = {
+  normal:    'Normal',
+  attention: 'Atenção',
+  critical:  'Crítico',
 }
 
 function formatMeasurementTime(iso: string): string {
@@ -66,13 +76,16 @@ interface RecentMeasurementsProps {
   onRefresh: () => void
 }
 
+import { useState, useMemo } from 'react'
+import { ChevronDown, ChevronUp } from 'lucide-react-native'
+
 export function RecentMeasurements({
   measurements,
   isLoading,
   onRefresh,
 }: RecentMeasurementsProps) {
-  const isDark      = useColorScheme() === 'dark'
-  const shimmer     = useSharedValue(0.4)
+  const isDark        = useColorScheme() === 'dark'
+  const shimmer       = useSharedValue(0.4)
   const skeletonStyle = useAnimatedStyle(() => ({ opacity: shimmer.value }))
 
   useEffect(() => {
@@ -88,8 +101,25 @@ export function RecentMeasurements({
     return () => cancelAnimation(shimmer)
   }, [isLoading])
 
-  const textColor = isDark ? '#FFFFFF' : colors.navy
+  const textColor = isDark ? colors.textOnDark : colors.navy
   const cardBg    = isDark ? DARK.cardBg : colors.white
+
+  // Agrupar medições por horário
+  const grouped = useMemo(() => {
+    const map = new Map<string, HealthMeasurement[]>()
+    measurements.forEach((m) => {
+      const time = formatMeasurementTime(m.measuredAt)
+      if (!map.has(time)) map.set(time, [])
+      map.get(time)!.push(m)
+    })
+    
+    return Array.from(map.entries()).map(([timeStr, items]) => ({
+      timeStr,
+      items
+    }))
+  }, [measurements])
+
+  const [expandedTime, setExpandedTime] = useState<string | null>(null)
 
   return (
     <View style={styles.container}>
@@ -124,19 +154,25 @@ export function RecentMeasurements({
       {/* Estado vazio */}
       {!isLoading && measurements.length === 0 && (
         <View style={styles.emptyState}>
-          <CalendarX size={40} color={colors.border} strokeWidth={1.5} />
+          <View style={styles.emptyIconWrapper}>
+            <CalendarX size={32} color={colors.cerulean} strokeWidth={1.5} />
+          </View>
           <Text style={styles.emptyTitle}>Nenhuma medição hoje</Text>
           <Text style={styles.emptySubtext}>
-            Toque em "Registrar medição" para começar
+            Toque em "Registrar medição" para{'\n'}
+            começar seu acompanhamento
           </Text>
         </View>
       )}
 
-      {/* Lista de medições */}
-      {!isLoading && measurements.map((m) => (
-        <MeasurementCard
-          key={m.id}
-          measurement={m}
+      {/* Lista de medições agrupadas */}
+      {!isLoading && grouped.map((group, index) => (
+        <MeasurementGroup
+          key={group.timeStr}
+          group={group}
+          index={index}
+          isExpanded={expandedTime === group.timeStr}
+          onToggle={() => setExpandedTime(prev => prev === group.timeStr ? null : group.timeStr)}
           cardBg={cardBg}
           textColor={textColor}
         />
@@ -148,37 +184,108 @@ export function RecentMeasurements({
 
 // ── Subcomponentes internos ────────────────────────────────────────────────
 
+function MeasurementGroup({
+  group,
+  index,
+  isExpanded,
+  onToggle,
+  cardBg,
+  textColor,
+}: {
+  group: { timeStr: string; items: HealthMeasurement[] }
+  index: number
+  isExpanded: boolean
+  onToggle: () => void
+  cardBg: string
+  textColor: string
+}) {
+  const reducedMotion = useReducedMotion()
+  const countText = group.items.length === 1 ? '1 aferição' : `${group.items.length} aferições`
+
+  return (
+    <Animated.View entering={reducedMotion ? undefined : FadeInDown.delay(index * 80).duration(400).springify()}>
+      <View style={[styles.groupCard, { backgroundColor: cardBg }]}>
+        {/* Cabeçalho do Acordeão */}
+        <Pressable
+          style={styles.groupHeader}
+          onPress={onToggle}
+          accessibilityRole="button"
+          accessibilityState={{ expanded: isExpanded }}
+          accessibilityLabel={`Medições das ${group.timeStr}, ${countText}. Toque para ${isExpanded ? 'recolher' : 'expandir'}`}
+        >
+          <View style={styles.groupHeaderLeft}>
+            <Text style={[styles.groupTimeStr, { color: textColor }]}>{group.timeStr}</Text>
+            <Text style={styles.groupCountText}>{countText}</Text>
+          </View>
+          <View style={styles.groupHeaderRight}>
+            {isExpanded ? (
+              <ChevronUp size={20} color={colors.placeholder} />
+            ) : (
+              <ChevronDown size={20} color={colors.placeholder} />
+            )}
+          </View>
+        </Pressable>
+
+        {/* Conteúdo Expandido */}
+        {isExpanded && (
+          <View style={styles.groupContent}>
+            {group.items.map((m, idx) => (
+              <MeasurementCard
+                key={m.id}
+                measurement={m}
+                index={idx}
+                cardBg={cardBg}
+                textColor={textColor}
+              />
+            ))}
+          </View>
+        )}
+      </View>
+    </Animated.View>
+  )
+}
+
 function MeasurementCard({
   measurement,
+  index,
   cardBg,
   textColor,
 }: {
   measurement: HealthMeasurement
+  index: number
   cardBg: string
   textColor: string
 }) {
   const Icon        = TYPE_ICONS[measurement.type]
   const statusColor = STATUS_COLORS[measurement.status]
   const typeLabel   = TYPE_LABELS[measurement.type]
-  const statusLabel = STATUS_LABELS[measurement.status]
   const timeStr     = formatMeasurementTime(measurement.measuredAt)
 
+  const reducedMotion = useReducedMotion()
+
   return (
-    <View
+    <Animated.View
+      entering={reducedMotion ? undefined : FadeInDown.delay(index * 80).duration(400).springify()}
       style={[styles.card, { backgroundColor: cardBg }]}
       accessible
       accessibilityRole="text"
-      accessibilityLabel={`${typeLabel}, ${String(measurement.value)} ${measurement.unit}, status ${statusLabel}`}
+      accessibilityLabel={`${typeLabel}, ${String(measurement.value)} ${measurement.unit}, status ${STATUS_PILL_LABEL[measurement.status]}, às ${timeStr}`}
     >
-      {/* Esquerda: status dot + ícone + nome/hora */}
-      <View style={styles.cardLeft}>
-        <View style={[styles.statusDot, { backgroundColor: statusColor }]} />
-        <Icon size={20} color={statusColor} strokeWidth={2} />
-        <View style={styles.cardTextCol}>
-          <Text style={[styles.cardTypeName, { color: textColor }]} numberOfLines={1}>
-            {typeLabel}
+      {/* Ícone com fundo colorido */}
+      <View style={[styles.iconWrapper, { backgroundColor: TYPE_BG_COLORS[measurement.type] }]}>
+        <Icon size={18} color={statusColor} strokeWidth={2.5} />
+      </View>
+
+      {/* Centro: nome + status pill */}
+      <View style={styles.cardCenter}>
+        <Text style={[styles.cardTypeName, { color: textColor }]} numberOfLines={1}>
+          {typeLabel}
+        </Text>
+        <View style={[styles.statusPill, { backgroundColor: statusColor + '18' }]}>
+          <View style={[styles.statusPillDot, { backgroundColor: statusColor }]} />
+          <Text style={[styles.statusPillText, { color: statusColor }]}>
+            {STATUS_PILL_LABEL[measurement.status]}
           </Text>
-          <Text style={styles.cardTime}>{timeStr}</Text>
         </View>
       </View>
 
@@ -189,7 +296,7 @@ function MeasurementCard({
         </Text>
         <Text style={styles.cardUnit}>{measurement.unit}</Text>
       </View>
-    </View>
+    </Animated.View>
   )
 }
 
@@ -202,13 +309,10 @@ function SkeletonCard({
 }) {
   return (
     <Animated.View style={[styles.card, { backgroundColor: bg }, style]}>
-      <View style={styles.cardLeft}>
-        <View style={[styles.statusDot, styles.skeletonBlock]} />
-        <View style={[styles.skeletonIcon, styles.skeletonBlock]} />
-        <View style={styles.cardTextCol}>
-          <View style={[styles.skeletonLine, styles.skeletonBlock]} />
-          <View style={[styles.skeletonLineSm, styles.skeletonBlock]} />
-        </View>
+      <View style={[styles.iconWrapper, styles.skeletonBlock]} />
+      <View style={styles.cardCenter}>
+        <View style={[styles.skeletonLine, styles.skeletonBlock]} />
+        <View style={[styles.skeletonLineSm, styles.skeletonBlock]} />
       </View>
       <View style={styles.cardRight}>
         <View style={[styles.skeletonValue, styles.skeletonBlock]} />
@@ -244,7 +348,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   sectionSub: {
-    fontSize: 13,
+    fontSize: 14,
     color: colors.placeholder,
   },
   refreshBtn: {
@@ -257,80 +361,145 @@ const styles = StyleSheet.create({
   // Estado vazio
   emptyState: {
     alignItems: 'center',
-    paddingVertical: 32,
-    gap: 8,
+    paddingVertical: 40,
+    gap: 12,
+  },
+  emptyIconWrapper: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: colors.iceBlue,
+    borderWidth: 1.5,
+    borderColor: colors.cerulean + '40',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 4,
   },
   emptyTitle: {
-    fontSize: 15,
-    fontWeight: '400',
-    color: colors.placeholder,
-    marginTop: 4,
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.navy,
   },
   emptySubtext: {
-    fontSize: 13,
+    fontSize: 14,
     color: colors.placeholder,
     textAlign: 'center',
-    lineHeight: 20,
+    lineHeight: 22,
   },
 
-  // Card de medição
+  // Ícone colorido
+  iconWrapper: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  // Status pill
+  statusPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 20,
+    alignSelf: 'flex-start',
+  },
+  statusPillDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  statusPillText: {
+    fontSize: 14,
+    fontWeight: '700',
+  },
+
+  // Acordeão (Grupo)
+  groupCard: {
+    borderRadius: 16,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: colors.sandy + '55',
+    shadowColor: colors.navy,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.07,
+    shadowRadius: 8,
+    elevation: 3,
+    overflow: 'hidden',
+  },
+  groupHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 18,
+    minHeight: 64,
+  },
+  groupHeaderLeft: {
+    gap: 4,
+  },
+  groupHeaderRight: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 24,
+    height: 24,
+  },
+  groupTimeStr: {
+    fontSize: 18,
+    fontWeight: '800',
+    letterSpacing: -0.5,
+  },
+  groupCountText: {
+    fontSize: 13,
+    color: colors.placeholder,
+    fontWeight: '500',
+  },
+  groupContent: {
+    paddingHorizontal: 12,
+    paddingBottom: 12,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+    paddingTop: 12,
+  },
+
+  // Card de medição (agora interno ao acordeão)
   card: {
     borderRadius: 12,
     paddingVertical: 14,
-    paddingHorizontal: 16,
-    marginBottom: 8,
+    paddingHorizontal: 12,
+    marginBottom: 6,
     flexDirection: 'row',
     alignItems: 'center',
-    shadowColor: colors.navy,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    elevation: 1,
+    gap: 12,
+    backgroundColor: 'rgba(0, 0, 0, 0.02)', // Fundo sutil para diferenciar as linhas
   },
-  cardLeft: {
+  cardCenter: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  statusDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  cardTextCol: {
-    flex: 1,
-    gap: 2,
+    gap: 5,
   },
   cardTypeName: {
     fontSize: 15,
-    fontWeight: '600',
-  },
-  cardTime: {
-    fontSize: 12,
-    color: colors.placeholder,
+    fontWeight: '700',
   },
   cardRight: {
     alignItems: 'flex-end',
     gap: 2,
   },
   cardValue: {
-    fontSize: 20,
-    fontWeight: '700',
+    fontSize: 24,
+    fontWeight: '800',
+    letterSpacing: -0.5,
   },
   cardUnit: {
-    fontSize: 12,
+    fontSize: 14,
     color: colors.placeholder,
   },
 
   // Skeleton
   skeletonBlock: {
     backgroundColor: colors.border,
-    borderRadius: 4,
-  },
-  skeletonIcon: {
-    width: 20,
-    height: 20,
     borderRadius: 4,
   },
   skeletonLine: {

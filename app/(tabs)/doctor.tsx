@@ -57,10 +57,7 @@ export default function DoctorScreen() {
             <Text style={styles.crmText}>CRM: {MOCK_DOCTOR.crm}</Text>
           </View>
 
-          <View style={styles.verifiedRow}>
-            <ShieldCheck size={14} color={colors.esmeralda} strokeWidth={2} />
-            <Text style={styles.verifiedText}>Médico verificado pela VigiDoc</Text>
-          </View>
+
         </View>
 
         {/* 3. Botões de ação */}
@@ -87,7 +84,7 @@ export default function DoctorScreen() {
             accessibilityRole="button"
             accessibilityLabel="Falar com meu médico"
           >
-            <MessageCircle size={18} color={colors.ceruleanDeep} strokeWidth={2} />
+            <MessageCircle size={18} color={colors.cerulean} strokeWidth={2} />
             <Text style={styles.actionBtnSecondaryText}>Falar com médico</Text>
           </Pressable>
         </View>
@@ -95,14 +92,14 @@ export default function DoctorScreen() {
         {/* 4. Atendimento Integrado */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Building2 size={16} color={colors.ceruleanDeep} strokeWidth={2} />
+            <Building2 size={16} color={colors.cerulean} strokeWidth={2} />
             <Text style={styles.sectionTitle}>Atendimento Integrado</Text>
           </View>
 
           <View style={styles.infoCard}>
             <View style={styles.infoRow}>
               <View style={styles.infoIconWrap}>
-                <Clock size={20} color={colors.ceruleanDeep} strokeWidth={2} />
+                <Clock size={20} color={colors.cerulean} strokeWidth={2} />
               </View>
               <View style={styles.infoTexts}>
                 <Text style={styles.infoLabel}>ANÁLISE DE PRONTUÁRIO</Text>
@@ -127,7 +124,7 @@ export default function DoctorScreen() {
         {/* 5. Sobre o Profissional */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <FileText size={16} color={colors.ceruleanDeep} strokeWidth={2} />
+            <FileText size={16} color={colors.cerulean} strokeWidth={2} />
             <Text style={styles.sectionTitle}>Sobre o Profissional</Text>
           </View>
           <View style={styles.infoCard}>
@@ -138,7 +135,7 @@ export default function DoctorScreen() {
         {/* 6. Card educativo */}
         <View style={styles.eduCard}>
           <View style={styles.sectionHeader}>
-            <Heart size={18} color={colors.ceruleanDeep} strokeWidth={2} />
+            <Heart size={18} color={colors.cerulean} strokeWidth={2} />
             <Text style={styles.sectionTitle}>Como colaborar com seu tratamento?</Text>
           </View>
           <Text style={styles.eduText}>
@@ -184,6 +181,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginTop: -28,
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.sandy + '55',
     shadowColor: colors.navy,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.08,
@@ -198,7 +197,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: colors.ceruleanDeep,
+    backgroundColor: colors.cerulean,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 3,
@@ -242,7 +241,7 @@ const styles = StyleSheet.create({
   crmText: {
     fontSize: 12,
     fontWeight: '600',
-    color: colors.ceruleanDeep,
+    color: colors.cerulean,
   },
   verifiedRow: {
     flexDirection: 'row',
@@ -273,7 +272,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   actionBtnPrimary: {
-    backgroundColor: colors.ceruleanDeep,
+    backgroundColor: colors.cerulean,
   },
   actionBtnPrimaryText: {
     fontSize: 14,
@@ -288,7 +287,7 @@ const styles = StyleSheet.create({
   actionBtnSecondaryText: {
     fontSize: 14,
     fontWeight: '700',
-    color: colors.ceruleanDeep,
+    color: colors.cerulean,
   },
 
   // Sections
@@ -309,6 +308,8 @@ const styles = StyleSheet.create({
   infoCard: {
     backgroundColor: colors.white,
     borderRadius: 16,
+    borderWidth: 1,
+    borderColor: colors.sandy + '55',
     shadowColor: colors.navy,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.04,
@@ -364,7 +365,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 20,
     borderWidth: 1,
-    borderColor: colors.cerulean + '44',
+    borderColor: colors.sandy + '55',
   },
   eduText: {
     fontSize: 14,

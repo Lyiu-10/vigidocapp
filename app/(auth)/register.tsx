@@ -3,7 +3,6 @@ import {
   Text,
   StyleSheet,
   KeyboardAvoidingView,
-  TouchableOpacity,
   Pressable,
   ScrollView,
 } from 'react-native'
@@ -12,11 +11,18 @@ import { router } from 'expo-router'
 import { Activity, ArrowLeft } from 'lucide-react-native'
 import { colors } from '@/lib/constants/colors'
 import { Input } from '@/components/ui/Input'
+import { secureStorage } from '@/lib/storage/secureStorage'
 
 export default function RegisterScreen() {
-  const handleRegister = () => {
-    // TODO: integrar com API de cadastro
-    router.replace('/')
+  const handleRegister = async () => {
+    // TODO: substituir pela chamada real à API
+    await secureStorage.set('auth_token', 'token_placeholder')
+    const onboardingDone = await secureStorage.get('onboarding_completed')
+    if (onboardingDone !== 'true') {
+      router.replace('/onboarding')
+    } else {
+      router.replace('/(tabs)')
+    }
   }
 
   return (
@@ -106,13 +112,14 @@ export default function RegisterScreen() {
 
           <View style={styles.loginRow}>
             <Text style={styles.loginLabel}>Já tem conta? </Text>
-            <TouchableOpacity
+            <Pressable
               onPress={() => router.back()}
               accessibilityLabel="Ir para login"
               accessibilityRole="button"
+              style={({ pressed }) => [pressed && { opacity: 0.7 }]}
             >
               <Text style={styles.loginLink}>Entrar</Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </ScrollView>
 
@@ -172,6 +179,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
+    borderWidth: 1,
+    borderColor: colors.sandy + '55',
     shadowColor: colors.navy,
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.06,
@@ -204,13 +213,13 @@ const styles = StyleSheet.create({
 
   // CTA
   cta: {
-    backgroundColor: colors.esmeralda,
+    backgroundColor: colors.cerulean,
     height: 56,
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 20,
-    shadowColor: colors.esmeralda,
+    shadowColor: colors.cerulean,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
     shadowRadius: 8,
@@ -221,7 +230,7 @@ const styles = StyleSheet.create({
     transform: [{ scale: 0.99 }],
   },
   ctaText: {
-    color: colors.navy,
+    color: colors.white,
     fontSize: 18,
     fontWeight: '700',
     letterSpacing: 0.2,
@@ -240,7 +249,7 @@ const styles = StyleSheet.create({
   },
   loginLink: {
     fontSize: 14,
-    color: colors.ceruleanDeep,
+    color: colors.cerulean,
     fontWeight: '700',
   },
 })

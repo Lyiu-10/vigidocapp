@@ -1,4 +1,4 @@
-import { useState } from 'react'
+wimport { useState, useMemo, useEffect } from 'react'
 import {
   View,
   Text,
@@ -24,47 +24,49 @@ import type { MeasurementType, HealthStatus } from '@/types/domain'
 
 /* ─────────────────────── Tokens de Cor ─────────────────────── */
 
-const NAVY        = colors.navy       // #002959 — mesmo do HomeHeader
-const NAVY_BADGE  = '#0A6F97'
-const BG          = '#F8FAFC'
-const CARD_BG     = '#FFFFFF'
+const NAVY = colors.navy       // #002959 — mesmo do HomeHeader
+const NAVY_BADGE = colors.cerulean
+const BG = '#F8FAFC'
+const CARD_BG = '#FFFFFF'
 const TEXT_PRIMARY = '#1E293B'
-const TEXT_MUTED   = '#64748B'
-const ORANGE      = '#FF9F1C'
-const RED         = '#E71D36'
-const GREEN       = colors.esmeralda
-const BORDER      = '#E2E8F0'
+const TEXT_MUTED = '#64748B'
+const ORANGE = '#FF9F1C'
+const RED = '#E71D36'
+const GREEN = colors.esmeralda
+const BORDER = '#E2E8F0'
 
 /* ─────────────────── Ícone por tipo ──────────────────── */
 
 const TYPE_ICON: Record<MeasurementType, { Icon: typeof Heart; emoji: string }> = {
-  blood_pressure:    { Icon: Activity,    emoji: '🩺' },
-  heart_rate:        { Icon: Heart,       emoji: '❤️' },
-  temperature:       { Icon: Thermometer, emoji: '🌡️' },
-  oxygen_saturation: { Icon: Wind,        emoji: '🫁' },
-  glucose:           { Icon: Droplets,    emoji: '🩸' },
-  weight:            { Icon: Scale,       emoji: '⚖️' },
+  blood_pressure: { Icon: Activity, emoji: '🩺' },
+  heart_rate: { Icon: Heart, emoji: '❤️' },
+  temperature: { Icon: Thermometer, emoji: '🌡️' },
+  oxygen_saturation: { Icon: Wind, emoji: '🫁' },
+  glucose: { Icon: Droplets, emoji: '🩸' },
+  weight: { Icon: Scale, emoji: '⚖️' },
 }
 
 const TYPE_LABEL: Record<MeasurementType, string> = {
-  blood_pressure:    'Pressão Arterial',
-  heart_rate:        'Freq. Cardíaca',
-  temperature:       'Temperatura',
+  blood_pressure: 'Pressão Arterial',
+  heart_rate: 'Freq. Cardíaca',
+  temperature: 'Temperatura',
   oxygen_saturation: 'Oxigenação',
-  glucose:           'Glicose',
-  weight:            'Peso',
+  glucose: 'Glicose',
+  weight: 'Peso',
 }
 
 const TYPE_UNIT: Record<MeasurementType, string> = {
-  blood_pressure:    'mmHg',
-  heart_rate:        'BPM',
-  temperature:       '°C',
+  blood_pressure: 'mmHg',
+  heart_rate: 'BPM',
+  temperature: '°C',
   oxygen_saturation: 'SpO₂ %',
-  glucose:           'mg/dL',
-  weight:            'kg',
+  glucose: 'mg/dL',
+  weight: 'kg',
 }
 
 /* ─────────── Dados Simulados (mock) ─────────── */
+
+import { useMeasurementStore } from '@/store/measurement.store'
 
 interface VitalItem {
   type: MeasurementType
@@ -79,66 +81,13 @@ interface DailyRecord {
   vitals: VitalItem[]
 }
 
-const MOCK_RECORDS: DailyRecord[] = [
-  {
-    id: '1',
-    date: 'Sáb., 24 de Mai.',
-    time: '09:41',
-    vitals: [
-      { type: 'blood_pressure',    value: '120/80',  status: 'normal' },
-      { type: 'heart_rate',        value: '72',      status: 'normal' },
-      { type: 'temperature',       value: '36.5',    status: 'normal' },
-      { type: 'oxygen_saturation', value: '98',      status: 'normal' },
-      { type: 'glucose',           value: '95',      status: 'normal' },
-      { type: 'weight',            value: '74.2',    status: 'normal' },
-    ],
-  },
-  {
-    id: '2',
-    date: 'Sex., 23 de Mai.',
-    time: '08:15',
-    vitals: [
-      { type: 'blood_pressure',    value: '145/95',  status: 'critical' },
-      { type: 'heart_rate',        value: '100',     status: 'attention' },
-      { type: 'temperature',       value: '37.8',    status: 'attention' },
-      { type: 'oxygen_saturation', value: '96',      status: 'normal' },
-      { type: 'glucose',           value: '180',     status: 'attention' },
-      { type: 'weight',            value: '74.5',    status: 'normal' },
-    ],
-  },
-  {
-    id: '3',
-    date: 'Qui., 22 de Mai.',
-    time: '07:50',
-    vitals: [
-      { type: 'blood_pressure',    value: '130/85',  status: 'attention' },
-      { type: 'heart_rate',        value: '68',      status: 'normal' },
-      { type: 'temperature',       value: '36.7',    status: 'normal' },
-      { type: 'oxygen_saturation', value: '97',      status: 'normal' },
-    ],
-  },
-  {
-    id: '4',
-    date: 'Qua., 21 de Mai.',
-    time: '10:20',
-    vitals: [
-      { type: 'blood_pressure',    value: '118/76',  status: 'normal' },
-      { type: 'heart_rate',        value: '65',      status: 'normal' },
-      { type: 'temperature',       value: '36.4',    status: 'normal' },
-      { type: 'oxygen_saturation', value: '99',      status: 'normal' },
-      { type: 'glucose',           value: '88',      status: 'normal' },
-      { type: 'weight',            value: '73.9',    status: 'normal' },
-    ],
-  },
-]
-
 /* ─────────── Cor por status ─────────── */
 
 function statusColor(status: HealthStatus): string {
   switch (status) {
-    case 'normal':    return GREEN
+    case 'normal': return GREEN
     case 'attention': return ORANGE
-    case 'critical':  return RED
+    case 'critical': return RED
   }
 }
 
@@ -146,22 +95,68 @@ function statusColor(status: HealthStatus): string {
 
 type FilterKey = '7d' | '30d' | '90d'
 const FILTERS: { key: FilterKey; label: string }[] = [
-  { key: '7d',  label: '7d' },
+  { key: '7d', label: '7d' },
   { key: '30d', label: '30d' },
   { key: '90d', label: '90d' },
 ]
 
 /* ═══════════════ COMPONENTE PRINCIPAL ═══════════════ */
 
+
 export default function HistoryScreen() {
   const [activeFilter, setActiveFilter] = useState<FilterKey>('7d')
-  const [expandedId, setExpandedId]     = useState<string | null>('2') // 2º card pré-expandido p/ demo
+  const [expandedId, setExpandedId] = useState<string | null>(null)
+
+  const records = useMeasurementStore((s) => s.records)
+
+  // Agrupar medições por dia/hora
+  const groupedRecords = useMemo(() => {
+    const map = new Map<string, DailyRecord>()
+
+    records.forEach(r => {
+      const d = new Date(r.measuredAt)
+
+      const dayStr = d.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', '')
+      const dateNum = d.getDate()
+      const monthStr = d.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '')
+
+      // ex: "Sáb., 24 de Mai."
+      const dateStr = `${dayStr.charAt(0).toUpperCase() + dayStr.slice(1)}., ${dateNum} de ${monthStr.charAt(0).toUpperCase() + monthStr.slice(1)}.`
+      const timeStr = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
+
+      const key = `${dateStr}-${timeStr}`
+      if (!map.has(key)) {
+        map.set(key, {
+          id: key,
+          date: dateStr,
+          time: timeStr,
+          vitals: []
+        })
+      }
+
+      map.get(key)!.vitals.push({
+        type: r.type,
+        value: String(r.value),
+        status: r.status
+      })
+    })
+
+    return Array.from(map.values())
+  }, [records])
 
   // Resumo semântico (calculados a partir do mock)
-  const allVitals      = MOCK_RECORDS.flatMap((r) => r.vitals)
-  const totalCount     = allVitals.length
+  const allVitals = groupedRecords.flatMap((r) => r.vitals)
+  const totalCount = allVitals.length
   const attentionCount = allVitals.filter((v) => v.status === 'attention').length
-  const criticalCount  = allVitals.filter((v) => v.status === 'critical').length
+  const criticalCount = allVitals.filter((v) => v.status === 'critical').length
+
+  // Pré-expandir o primeiro card se houver e ainda não tiver clicado
+
+  useEffect(() => {
+    if (expandedId === null && groupedRecords.length > 0) {
+      setExpandedId(groupedRecords[0].id)
+    }
+  }, [expandedId, groupedRecords])
 
   function toggleCard(id: string) {
     setExpandedId((prev) => (prev === id ? null : id))
@@ -262,7 +257,7 @@ export default function HistoryScreen() {
           </View>
 
           {/* ──────── 4. Cards Diários ──────── */}
-          {MOCK_RECORDS.map((record) => {
+          {groupedRecords.map((record) => {
             const isExpanded = expandedId === record.id
             return (
               <View key={record.id} style={styles.dayCard}>
@@ -283,7 +278,7 @@ export default function HistoryScreen() {
                     </Text>
                   </View>
                   {isExpanded
-                    ? <ChevronUp   size={22} color={TEXT_MUTED} strokeWidth={2} />
+                    ? <ChevronUp size={22} color={TEXT_MUTED} strokeWidth={2} />
                     : <ChevronDown size={22} color={TEXT_MUTED} strokeWidth={2} />
                   }
                 </Pressable>
@@ -292,9 +287,9 @@ export default function HistoryScreen() {
                 {isExpanded && (
                   <View style={styles.vitalsGrid}>
                     {record.vitals.map((vital) => {
-                      const info     = TYPE_ICON[vital.type]
-                      const label    = TYPE_LABEL[vital.type]
-                      const unit     = TYPE_UNIT[vital.type]
+                      const info = TYPE_ICON[vital.type]
+                      const label = TYPE_LABEL[vital.type]
+                      const unit = TYPE_UNIT[vital.type]
                       const valColor = statusColor(vital.status)
 
                       return (
@@ -440,6 +435,8 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     marginTop: -28,                  // ← Overlap refinado (-28px)
     marginBottom: 20,
+    borderWidth: 1,
+    borderColor: colors.sandy + '55',
     shadowColor: '#002959',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.08,
@@ -472,6 +469,8 @@ const styles = StyleSheet.create({
     backgroundColor: CARD_BG,
     borderRadius: 16,
     marginBottom: 12,
+    borderWidth: 1,
+    borderColor: colors.sandy + '55',
     shadowColor: '#002959',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.04,

@@ -13,6 +13,7 @@ import { ArrowLeft, CheckCircle } from 'lucide-react-native'
 import { colors } from '@/lib/constants/colors'
 import { MEASUREMENT_CONFIG } from '@/lib/constants/measurementTypes'
 import { useMeasurementStore } from '@/store/measurement.store'
+import { useTutorialStore } from '@/store/tutorial.store'
 import { TutorialHighlight } from '@/components/shared/TutorialHighlight'
 
 const DARK = { bg: '#0F172A', text: '#FFFFFF' } as const
@@ -20,6 +21,7 @@ const DARK = { bg: '#0F172A', text: '#FFFFFF' } as const
 export default function Step2Screen() {
   const isDark      = useColorScheme() === 'dark'
   const selectedType = useMeasurementStore((s) => s.selectedType)
+  const { currentStep, activeTour, nextStep, startTour } = useTutorialStore()
 
   // Guarda de entrada: se chegar sem tipo selecionado, volta ao início
   useEffect(() => {
@@ -83,7 +85,15 @@ export default function Step2Screen() {
       <View style={styles.footer}>
         <Pressable
           style={({ pressed }) => [styles.cta, pressed && styles.ctaPressed]}
-          onPress={() => router.push('/measurement/step-3')}
+          onPress={() => {
+            if (activeTour === 'measurement' && currentStep === 1) {
+              nextStep(2) // Finishes the 'measurement' tour
+              setTimeout(() => {
+                startTour('measurement_input')
+              }, 300)
+            }
+            router.push('/measurement/step-3')
+          }}
           accessibilityRole="button"
           accessibilityLabel="Continuar para inserir o valor"
         >
@@ -169,7 +179,7 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   cta: {
-    backgroundColor: colors.esmeralda,
+    backgroundColor: colors.cerulean,
     height: 56,
     borderRadius: 14,
     alignItems: 'center',
@@ -179,6 +189,6 @@ const styles = StyleSheet.create({
   ctaText: {
     fontSize: 17,
     fontWeight: '700',
-    color: colors.navy,
+    color: colors.white,
   },
 })

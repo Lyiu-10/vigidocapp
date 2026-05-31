@@ -30,6 +30,7 @@ export default function Step4Screen() {
   const diastolic    = useMeasurementStore((s) => s.diastolic)
   const resetCurrent = useMeasurementStore((s) => s.resetCurrent)
   const markCompleted= useMeasurementStore((s) => s.markCompleted)
+  const addSessionRecord = useMeasurementStore((s) => s.addSessionRecord)
 
   useEffect(() => {
     if (!selectedType) router.replace('/measurement/step-1')
@@ -44,6 +45,15 @@ export default function Step4Screen() {
   const textColor        = isDark ? DARK.text : colors.navy
 
   function handleSave() {
+    addSessionRecord({
+      id: String(Date.now()),
+      userId: 'user-1',
+      type: selectedType!,
+      value: displayValue,
+      unit: config.unit,
+      status: 'normal',
+      measuredAt: new Date().toISOString(), // Será sobrescrito no commitSession
+    })
     // TODO: enviar para API via React Query mutation quando disponível
     markCompleted()
     resetCurrent()
@@ -157,6 +167,8 @@ const styles = StyleSheet.create({
     padding: 28,
     alignItems: 'center',
     gap: 8,
+    borderWidth: 1,
+    borderColor: colors.sandy + '55',
     shadowColor: colors.navy,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.08,
@@ -182,7 +194,7 @@ const styles = StyleSheet.create({
   cardValue: {
     fontSize: 52,
     fontWeight: '700',
-    color: colors.ceruleanDeep,
+    color: colors.cerulean,
     letterSpacing: -1,
     lineHeight: 64,
   },
@@ -208,7 +220,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   cta: {
-    backgroundColor: colors.esmeralda,
+    backgroundColor: colors.cerulean,
     height: 56,
     borderRadius: 14,
     alignItems: 'center',
@@ -218,7 +230,7 @@ const styles = StyleSheet.create({
   ctaText: {
     fontSize: 17,
     fontWeight: '700',
-    color: colors.navy,
+    color: colors.white,
   },
   ghostBtn: {
     height: 48,
@@ -228,6 +240,6 @@ const styles = StyleSheet.create({
   ghostText: {
     fontSize: 15,
     fontWeight: '500',
-    color: colors.ceruleanDeep,
+    color: colors.cerulean,
   },
 })

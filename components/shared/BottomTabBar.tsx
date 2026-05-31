@@ -29,7 +29,7 @@ export function BottomTabBar({ state, navigation, unreadNotifications = 0 }: Pro
   const insets = useSafeAreaInsets()
   const isDark = useColorScheme() === 'dark'
 
-  const activeColor   = isDark ? colors.esmeralda : colors.ceruleanDeep
+  const activeColor   = colors.cerulean
   const inactiveColor = isDark ? DARK.inactive     : colors.placeholder
 
   return (

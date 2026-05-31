@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
   body: {
     fontSize: 16,
     fontWeight: '400',
-    color: colors.ceruleanDeep,
+    color: colors.cerulean,
     textAlign: 'center',
     lineHeight: 26,
   },

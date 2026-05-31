@@ -1,5 +1,6 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { LinearGradient } from 'expo-linear-gradient'
 import { Plus } from 'lucide-react-native'
 import { useState, useEffect } from 'react'
 import { router } from 'expo-router'
@@ -9,6 +10,8 @@ import { TutorialHighlight } from '@/components/shared/TutorialHighlight'
 
 // Azul claro suave sobre navy — especificado no design mas sem token equivalente em colors.ts
 const SUBTITLE_COLOR = '#B0C4DE'
+// Azul complementar para gradiente do header — sem token equivalente em colors.ts
+const GRADIENT_END = '#0A4A82'
 
 function getInitials(name: string): string {
   return name
@@ -55,21 +58,24 @@ export function HomeHeader({ userName, onAvatarPress, measurementCount }: HomeHe
     : `${measurementCount} medições hoje`
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top + 16 }]}>
+    <LinearGradient
+      colors={[colors.navy, GRADIENT_END]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={[styles.container, { paddingTop: insets.top + 16 }]}
+    >
 
       {/* Linha de saudação + avatar */}
       <View style={styles.row}>
         <View style={styles.textCol}>
-          <TutorialHighlight tourId="home" stepIndex={0} borderRadius={8}>
-            <View style={{ gap: 4 }}>
-              <Text style={styles.greeting} numberOfLines={1}>
-                {greeting}
-              </Text>
-              <Text style={styles.subtitle}>
-                {timeStr} · {measurementLabel}
-              </Text>
-            </View>
-          </TutorialHighlight>
+          <View style={{ gap: 4 }}>
+            <Text style={styles.greeting} numberOfLines={1}>
+              {greeting}
+            </Text>
+            <Text style={styles.subtitle}>
+              {timeStr} · {measurementLabel}
+            </Text>
+          </View>
         </View>
 
         <HelpButton tourId="home" />
@@ -94,21 +100,27 @@ export function HomeHeader({ userName, onAvatarPress, measurementCount }: HomeHe
           accessibilityRole="button"
           accessibilityLabel="Registrar nova medição"
         >
-          <Plus size={20} color={colors.navy} strokeWidth={2.5} />
+          <Plus size={22} color={colors.white} strokeWidth={2.5} />
           <Text style={styles.ctaText}>Registrar medição</Text>
         </Pressable>
       </TutorialHighlight>
 
-    </View>
+    </LinearGradient>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.navy,
     paddingHorizontal: 20,
-    paddingBottom: 24,
+    paddingBottom: 32,
     gap: 16,
+    borderBottomLeftRadius: 28,
+    borderBottomRightRadius: 28,
+    shadowColor: colors.navy,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    elevation: 12,
   },
   row: {
     flexDirection: 'row',
@@ -140,7 +152,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: colors.ceruleanDeep,
+    backgroundColor: colors.cerulean,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -151,7 +163,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   cta: {
-    backgroundColor: colors.esmeralda,
+    backgroundColor: colors.cerulean,
     height: 56,
     borderRadius: 14,
     flexDirection: 'row',
@@ -163,8 +175,8 @@ const styles = StyleSheet.create({
     opacity: 0.85,
   },
   ctaText: {
-    fontSize: 17,
+    fontSize: 20,
     fontWeight: '700',
-    color: colors.navy,
+    color: colors.white,
   },
 })

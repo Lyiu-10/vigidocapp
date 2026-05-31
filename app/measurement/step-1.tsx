@@ -25,6 +25,7 @@ export default function Step1Screen() {
   const completed = useMeasurementStore((s) => s.completed)
   const resetSession = useMeasurementStore((s) => s.resetSession)
 
+  const { currentStep, activeTour, nextStep } = useTutorialStore()
   const _hydrated                 = useTutorialStore((s) => s._hydrated)
   const measurementTourCompleted  = useTutorialStore((s) => s.measurementTourCompleted)
   const startTour                 = useTutorialStore((s) => s.startTour)
@@ -41,6 +42,9 @@ export default function Step1Screen() {
   const textColor = isDark ? '#FFFFFF' : '#004B87'
 
   function handleSelect(type: MeasurementType) {
+    if (activeTour === 'measurement' && currentStep === 0) {
+      nextStep(2)
+    }
     setType(type)
     router.push('/measurement/step-2')
   }
@@ -52,47 +56,50 @@ export default function Step1Screen() {
         'Você já preencheu alguns dados. Se sair agora, essas informações não serão salvas na sua rotina. Deseja sair mesmo assim?',
         [
           { text: 'Não', style: 'cancel' },
-          { text: 'Sim, Sair', style: 'destructive', onPress: () => { resetSession(); router.replace('/(tabs)/') } }
+          { text: 'Sim, Sair', style: 'destructive', onPress: () => { resetSession(); router.replace('/(tabs)') } }
         ]
       )
     } else {
-      router.replace('/(tabs)/')
+    router.replace('/(tabs)')
     }
   }
 
   const allCompleted = completed.length === MEASUREMENT_TYPE_LIST.length
 
+  const commitSession = useMeasurementStore((s) => s.commitSession)
+
   function handleFinish() {
     if (!allCompleted) return
+    commitSession()
     resetSession()
-    router.replace({ pathname: '/(tabs)/', params: { saved: 'true' } })
+    router.replace({ pathname: '/(tabs)', params: { saved: 'true' } })
   }
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: bgColor }]} edges={['top', 'left', 'right', 'bottom']}>
-      <TutorialHighlight tourId="measurement" stepIndex={0} borderRadius={14}>
-        <ScrollView 
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
-          {/* 1. Header */}
-          <View style={styles.header}>
-            <Pressable
-              style={({ pressed }) => [styles.iconBtn, pressed && { opacity: 0.7 }]}
-              onPress={handleClose}
-              accessibilityLabel="Fechar Nova Medição"
-              accessibilityRole="button"
-            >
-              <X size={24} color="#64748B" strokeWidth={2} />
-            </Pressable>
-            <Text style={styles.stepIndicator}>1 de 4</Text>
-            <HelpButton tourId="measurement" />
-          </View>
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* 1. Header */}
+        <View style={styles.header}>
+          <Pressable
+            style={({ pressed }) => [styles.iconBtn, pressed && { opacity: 0.7 }]}
+            onPress={handleClose}
+            accessibilityLabel="Fechar Nova Medição"
+            accessibilityRole="button"
+          >
+            <X size={24} color="#64748B" strokeWidth={2} />
+          </Pressable>
+          <Text style={styles.stepIndicator}>1 de 4</Text>
+          <HelpButton tourId="measurement" />
+        </View>
 
-          <Text style={[styles.title, { color: textColor }]} allowFontScaling={true}>
-            O que vamos medir?
-          </Text>
+        <Text style={[styles.title, { color: textColor }]} allowFontScaling={true}>
+          O que vamos medir?
+        </Text>
 
+        <TutorialHighlight tourId="measurement" stepIndex={0} borderRadius={14}>
           {/* 2. Grid de Opções (Layout Palace) */}
           <View style={styles.gridContainer}>
             {MEASUREMENT_TYPE_LIST.map((type) => {
@@ -142,9 +149,8 @@ export default function Step1Screen() {
               )
             })}
           </View>
+        </TutorialHighlight>
         </ScrollView>
-      </TutorialHighlight>
-
       {/* 4. Botão Inferior */}
       <View style={styles.footer}>
         <Pressable

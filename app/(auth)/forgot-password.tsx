@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
   },
   backToLoginText: {
     fontSize: 14,
-    color: colors.ceruleanDeep,
+    color: colors.cerulean,
     fontWeight: '600',
   },
 

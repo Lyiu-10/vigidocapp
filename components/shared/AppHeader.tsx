@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: colors.ceruleanDeep,
+    backgroundColor: colors.cerulean,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: colors.ceruleanDeep,
+    backgroundColor: colors.cerulean,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 4,
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
   roleText: {
     fontSize: 11,
     fontWeight: '600',
-    color: colors.ceruleanDeep,
+    color: colors.cerulean,
   },
 
   // ── Layout interno ──

@@ -1,31 +1,60 @@
 import { View, Text, Pressable, StyleSheet, useWindowDimensions } from 'react-native'
 import { useTutorialStore } from '@/store/tutorial.store'
-import { HOME_TOUR_STEPS, MEASUREMENT_TOUR_STEPS } from '@/lib/constants/tours'
+import { HOME_TOUR_STEPS, MEASUREMENT_TOUR_STEPS, MEASUREMENT_INPUT_TOUR_STEPS } from '@/lib/constants/tours'
 import { colors } from '@/lib/constants/colors'
+import { router } from 'expo-router'
+import { useMeasurementStore } from '@/store/measurement.store'
 
 const DARK_BG      = 'rgba(0, 0, 0, 0.65)'
 const SCREEN_MARGIN = 16
 const ARROW_SIZE    = 10
 
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+
 export function TutorialOverlay() {
   const { width: sw, height: sh } = useWindowDimensions()
+  const insets = useSafeAreaInsets()
 
   const activeTour  = useTutorialStore((s) => s.activeTour)
   const currentStep = useTutorialStore((s) => s.currentStep)
   const layouts     = useTutorialStore((s) => s.layouts)
   const nextStep    = useTutorialStore((s) => s.nextStep)
   const skipTour    = useTutorialStore((s) => s.skipTour)
+  const startTour   = useTutorialStore((s) => s.startTour)
+
+  const setType = useMeasurementStore((s) => s.setType)
 
   if (!activeTour) return null
 
-  const steps  = activeTour === 'home' ? HOME_TOUR_STEPS : MEASUREMENT_TOUR_STEPS
+  const steps =
+    activeTour === 'home'
+      ? HOME_TOUR_STEPS
+      : activeTour === 'measurement'
+      ? MEASUREMENT_TOUR_STEPS
+      : MEASUREMENT_INPUT_TOUR_STEPS
   const step   = steps[currentStep]
   const layout = layouts[`${activeTour}:${currentStep}`]
   const isLast = currentStep === steps.length - 1
 
   if (!step) return null
 
-  const handleNext = () => nextStep(steps.length)
+  const handleNext = () => {
+    if (activeTour === 'measurement') {
+      if (currentStep === 0) {
+        // Seleciona um tipo padrão (Pressão Arterial) para avançar a tela
+        setType('blood_pressure')
+        router.push('/measurement/step-2')
+      } else if (currentStep === 1) {
+        router.push('/measurement/step-3')
+        setTimeout(() => startTour('measurement_input'), 300)
+      }
+    } else if (activeTour === 'measurement_input') {
+      if (currentStep === 0) {
+        router.push('/measurement/step-4')
+      }
+    }
+    nextStep(steps.length)
+  }
 
   // Fallback rect when element layout not yet registered
   const rect = layout ?? {
@@ -35,9 +64,34 @@ export function TutorialOverlay() {
     height: 60,
   }
 
-  // Show tooltip below element when it's in the top half, above otherwise
-  const showBelow = rect.y < sh * 0.55
+  const tooltipApproxHeight = 220
+  const spaceBelow = sh - (rect.y + rect.height) - insets.bottom
+  const spaceAbove = rect.y - insets.top
 
+  const canShowBelow = spaceBelow >= tooltipApproxHeight
+  const canShowAbove = spaceAbove >= tooltipApproxHeight
+
+  // If we can't show above or below comfortably, center it on screen over the hole punch
+  const isTargetHuge = !canShowBelow && !canShowAbove
+
+  let tooltipStyle: any = { left: SCREEN_MARGIN, right: SCREEN_MARGIN }
+  let arrowType: 'up' | 'down' | 'none' = 'none'
+
+  if (isTargetHuge) {
+    tooltipStyle.top = (sh - tooltipApproxHeight) / 2
+  } else if (canShowBelow || (!canShowAbove && rect.y < sh / 2)) {
+    // Show below if there's space, or if there's no space anywhere but it's higher up
+    const tooltipTop = Math.max(insets.top + 12, Math.min(rect.y + rect.height + 12, sh - insets.bottom - tooltipApproxHeight))
+    tooltipStyle.top = tooltipTop
+    tooltipStyle.maxHeight = Math.max(100, sh - tooltipTop - insets.bottom - 12)
+    arrowType = 'up'
+  } else {
+    // Show above
+    const tooltipBottom = Math.max(insets.bottom + 12, sh - rect.y + 12)
+    tooltipStyle.bottom = tooltipBottom
+    tooltipStyle.maxHeight = Math.max(100, sh - insets.top - tooltipBottom - 12)
+    arrowType = 'down'
+  }
   // Arrow horizontal center: clamp within tooltip
   const elementCenterX  = rect.x + rect.width / 2
   const arrowRawLeft    = elementCenterX - SCREEN_MARGIN - ARROW_SIZE
@@ -54,16 +108,9 @@ export function TutorialOverlay() {
       <View style={[styles.dark, { top: rect.y, left: rect.x + rect.width, right: 0, height: rect.height }]} />
 
       {/* ── Tooltip ── */}
-      <View
-        style={[
-          styles.tooltip,
-          showBelow
-            ? { top: rect.y + rect.height + ARROW_SIZE + 4, left: SCREEN_MARGIN, right: SCREEN_MARGIN }
-            : { bottom: sh - rect.y + ARROW_SIZE + 4, left: SCREEN_MARGIN, right: SCREEN_MARGIN },
-        ]}
-      >
+      <View style={[styles.tooltip, tooltipStyle]}>
         {/* Arrow up (tooltip below element) */}
-        {showBelow && (
+        {arrowType === 'up' && (
           <View style={[styles.arrowUp, { left: arrowLeft }]} />
         )}
 
@@ -97,7 +144,7 @@ export function TutorialOverlay() {
         </View>
 
         {/* Arrow down (tooltip above element) */}
-        {!showBelow && (
+        {arrowType === 'down' && (
           <View style={[styles.arrowDown, { left: arrowLeft }]} />
         )}
       </View>
@@ -198,13 +245,13 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 48,
     borderRadius: 12,
-    backgroundColor: colors.esmeralda,
+    backgroundColor: colors.cerulean,
     alignItems: 'center',
     justifyContent: 'center',
   },
   nextText: {
     fontSize: 16,
     fontWeight: '700',
-    color: colors.navy,
+    color: colors.white,
   },
 })

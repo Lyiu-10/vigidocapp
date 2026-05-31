@@ -50,19 +50,40 @@ export function TutorialHighlight({
     opacity: borderOpacity.value,
   }))
 
-  const handleLayout = useCallback(() => {
-    ref.current?.measureInWindow((x, y, width, height) => {
+  const measurePosition = useCallback(() => {
+    ref.current?.measure((x, y, width, height, pageX, pageY) => {
       if (width > 0 && height > 0) {
-        registerLayout(tourId, stepIndex, { x, y, width, height })
+        registerLayout(tourId, stepIndex, { x: pageX, y: pageY, width, height })
       }
     })
   }, [tourId, stepIndex, registerLayout])
 
+  const handleLayout = useCallback(() => {
+    measurePosition()
+  }, [measurePosition])
+
+  // Measure after mount with delay — onLayout fires before the View has
+  // settled into its final window position (e.g. inside ScrollView or SafeArea).
+  useEffect(() => {
+    const timer = setTimeout(measurePosition, 300)
+    return () => clearTimeout(timer)
+  }, [measurePosition])
+
+  // Re-measure when this step becomes active: element may have scrolled since mount.
+  // We use an interval to continuously update the layout in case of scrolling or dynamic resizing.
+  useEffect(() => {
+    if (!isActive) return
+    measurePosition() // Measure immediately
+    const interval = setInterval(measurePosition, 100)
+    return () => clearInterval(interval)
+  }, [isActive, measurePosition])
+
   return (
     <View
       ref={ref}
-      onLayout={handleLayout}
       style={isActive ? styles.elevated : undefined}
+      collapsable={false}
+      onLayout={handleLayout}
     >
       {children}
       {isActive && (

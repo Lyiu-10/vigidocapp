@@ -38,11 +38,20 @@ function RootNavigator() {
   const router = useRouter()
 
   useEffect(() => {
-    secureStorage.get('onboarding_seen').then(val => {
-      if (val !== 'true') {
-        router.replace('/onboarding')
+    async function checkInitialRoute() {
+      const token = await secureStorage.get('auth_token')
+      if (!token) {
+        router.replace('/(auth)/login')
+        return
       }
-    })
+      const onboardingDone = await secureStorage.get('onboarding_completed')
+      if (onboardingDone !== 'true') {
+        router.replace('/onboarding')
+        return
+      }
+      router.replace('/(tabs)')
+    }
+    checkInitialRoute()
   }, [])
 
   return <Stack screenOptions={{ headerShown: false }} />

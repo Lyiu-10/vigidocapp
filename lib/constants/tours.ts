@@ -2,6 +2,7 @@ export interface TourStep {
   stepIndex: number
   title: string
   description: string
+  requireInteraction?: boolean
 }
 
 export const HOME_TOUR_STEPS: TourStep[] = [
@@ -32,15 +33,21 @@ export const MEASUREMENT_TOUR_STEPS: TourStep[] = [
     stepIndex: 0,
     title: 'Escolha o que medir',
     description: 'Toque no tipo de medição que você vai registrar agora.',
+    requireInteraction: true,
   },
   {
     stepIndex: 1,
     title: 'Prepare-se antes de medir',
-    description: 'Siga as dicas desta tela para garantir uma leitura precisa.',
+    description: 'Siga as dicas desta tela para garantir uma leitura precisa. Em seguida, toque em "Estou pronto".',
+    requireInteraction: true,
   },
+]
+
+export const MEASUREMENT_INPUT_TOUR_STEPS: TourStep[] = [
   {
-    stepIndex: 2,
+    stepIndex: 0,
     title: 'Digite o valor',
     description: 'Insira o número que aparece no seu aparelho. Toque em Confirmar quando terminar.',
+    requireInteraction: true,
   },
 ]
