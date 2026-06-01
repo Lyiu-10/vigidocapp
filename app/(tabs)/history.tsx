@@ -1,4 +1,4 @@
-wimport { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import {
   View,
   Text,
@@ -6,7 +6,8 @@ import {
   ScrollView,
   Pressable,
 } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { LinearGradient } from 'expo-linear-gradient'
 import {
   CloudCheck,
   FileDown,
@@ -24,60 +25,57 @@ import type { MeasurementType, HealthStatus } from '@/types/domain'
 
 /* ─────────────────────── Tokens de Cor ─────────────────────── */
 
-const NAVY = colors.navy       // #002959 — mesmo do HomeHeader
-const NAVY_BADGE = colors.cerulean
-const BG = '#F8FAFC'
-const CARD_BG = '#FFFFFF'
+// Azul complementar para gradiente — sem token equivalente em colors.ts
+const GRADIENT_END = '#0A4A82'
+
+const NAVY      = colors.navy
+const CARD_BG   = colors.white
 const TEXT_PRIMARY = '#1E293B'
-const TEXT_MUTED = '#64748B'
-const ORANGE = '#FF9F1C'
-const RED = '#E71D36'
-const GREEN = colors.esmeralda
-const BORDER = '#E2E8F0'
+const TEXT_MUTED   = '#64748B'
 
 /* ─────────────────── Ícone por tipo ──────────────────── */
 
 const TYPE_ICON: Record<MeasurementType, { Icon: typeof Heart; emoji: string }> = {
-  blood_pressure: { Icon: Activity, emoji: '🩺' },
-  heart_rate: { Icon: Heart, emoji: '❤️' },
-  temperature: { Icon: Thermometer, emoji: '🌡️' },
-  oxygen_saturation: { Icon: Wind, emoji: '🫁' },
-  glucose: { Icon: Droplets, emoji: '🩸' },
-  weight: { Icon: Scale, emoji: '⚖️' },
+  blood_pressure:    { Icon: Activity,    emoji: '🩺' },
+  heart_rate:        { Icon: Heart,       emoji: '❤️' },
+  temperature:       { Icon: Thermometer, emoji: '🌡️' },
+  oxygen_saturation: { Icon: Wind,        emoji: '🫁' },
+  glucose:           { Icon: Droplets,    emoji: '🩸' },
+  weight:            { Icon: Scale,       emoji: '⚖️' },
 }
 
 const TYPE_LABEL: Record<MeasurementType, string> = {
-  blood_pressure: 'Pressão Arterial',
-  heart_rate: 'Freq. Cardíaca',
-  temperature: 'Temperatura',
+  blood_pressure:    'Pressão Arterial',
+  heart_rate:        'Freq. Cardíaca',
+  temperature:       'Temperatura',
   oxygen_saturation: 'Oxigenação',
-  glucose: 'Glicose',
-  weight: 'Peso',
+  glucose:           'Glicose',
+  weight:            'Peso',
 }
 
 const TYPE_UNIT: Record<MeasurementType, string> = {
-  blood_pressure: 'mmHg',
-  heart_rate: 'BPM',
-  temperature: '°C',
+  blood_pressure:    'mmHg',
+  heart_rate:        'BPM',
+  temperature:       '°C',
   oxygen_saturation: 'SpO₂ %',
-  glucose: 'mg/dL',
-  weight: 'kg',
+  glucose:           'mg/dL',
+  weight:            'kg',
 }
 
-/* ─────────── Dados Simulados (mock) ─────────── */
+/* ─────────── Dados (store) ─────────── */
 
 import { useMeasurementStore } from '@/store/measurement.store'
 
 interface VitalItem {
-  type: MeasurementType
-  value: string
+  type:   MeasurementType
+  value:  string
   status: HealthStatus
 }
 
 interface DailyRecord {
-  id: string
-  date: string         // ex: "Sáb., 24 de Mai."
-  time: string         // ex: "09:41"
+  id:     string
+  date:   string
+  time:   string
   vitals: VitalItem[]
 }
 
@@ -85,9 +83,9 @@ interface DailyRecord {
 
 function statusColor(status: HealthStatus): string {
   switch (status) {
-    case 'normal': return GREEN
-    case 'attention': return ORANGE
-    case 'critical': return RED
+    case 'normal':    return colors.esmeralda
+    case 'attention': return colors.amber
+    case 'critical':  return colors.critical
   }
 }
 
@@ -95,62 +93,46 @@ function statusColor(status: HealthStatus): string {
 
 type FilterKey = '7d' | '30d' | '90d'
 const FILTERS: { key: FilterKey; label: string }[] = [
-  { key: '7d', label: '7d' },
+  { key: '7d',  label: '7d'  },
   { key: '30d', label: '30d' },
   { key: '90d', label: '90d' },
 ]
 
 /* ═══════════════ COMPONENTE PRINCIPAL ═══════════════ */
 
-
 export default function HistoryScreen() {
+  const insets = useSafeAreaInsets()
   const [activeFilter, setActiveFilter] = useState<FilterKey>('7d')
-  const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [expandedId,   setExpandedId]   = useState<string | null>(null)
 
   const records = useMeasurementStore((s) => s.records)
 
-  // Agrupar medições por dia/hora
   const groupedRecords = useMemo(() => {
     const map = new Map<string, DailyRecord>()
 
     records.forEach(r => {
-      const d = new Date(r.measuredAt)
-
-      const dayStr = d.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', '')
+      const d       = new Date(r.measuredAt)
+      const dayStr  = d.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', '')
       const dateNum = d.getDate()
       const monthStr = d.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '')
 
-      // ex: "Sáb., 24 de Mai."
       const dateStr = `${dayStr.charAt(0).toUpperCase() + dayStr.slice(1)}., ${dateNum} de ${monthStr.charAt(0).toUpperCase() + monthStr.slice(1)}.`
       const timeStr = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
 
       const key = `${dateStr}-${timeStr}`
       if (!map.has(key)) {
-        map.set(key, {
-          id: key,
-          date: dateStr,
-          time: timeStr,
-          vitals: []
-        })
+        map.set(key, { id: key, date: dateStr, time: timeStr, vitals: [] })
       }
-
-      map.get(key)!.vitals.push({
-        type: r.type,
-        value: String(r.value),
-        status: r.status
-      })
+      map.get(key)!.vitals.push({ type: r.type, value: String(r.value), status: r.status })
     })
 
     return Array.from(map.values())
   }, [records])
 
-  // Resumo semântico (calculados a partir do mock)
-  const allVitals = groupedRecords.flatMap((r) => r.vitals)
-  const totalCount = allVitals.length
+  const allVitals      = groupedRecords.flatMap((r) => r.vitals)
+  const totalCount     = allVitals.length
   const attentionCount = allVitals.filter((v) => v.status === 'attention').length
-  const criticalCount = allVitals.filter((v) => v.status === 'critical').length
-
-  // Pré-expandir o primeiro card se houver e ainda não tiver clicado
+  const criticalCount  = allVitals.filter((v) => v.status === 'critical').length
 
   useEffect(() => {
     if (expandedId === null && groupedRecords.length > 0) {
@@ -164,28 +146,30 @@ export default function HistoryScreen() {
 
   return (
     <View style={styles.safe}>
-      {/* Fundo navy atrás da SafeArea (status bar) */}
-      <SafeAreaView style={{ backgroundColor: NAVY }} edges={['top']} />
-
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* ──────── 1. Header navy (dentro do scroll) ──────── */}
-        <View style={styles.header}>
+        {/* ──────── 1. Header com gradiente ──────── */}
+        <LinearGradient
+          colors={[colors.navy, GRADIENT_END]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={[styles.header, { paddingTop: insets.top + 16 }]}
+        >
           <Text style={styles.headerTitle} allowFontScaling={true}>
             Histórico
           </Text>
 
           <View style={styles.cloudBadge}>
-            <CloudCheck size={14} color="#FFFFFF" strokeWidth={2} />
+            <CloudCheck size={14} color={colors.white} strokeWidth={2} />
             <Text style={styles.cloudText} allowFontScaling={true}>
               Sincronizado e salvo na nuvem
             </Text>
           </View>
 
-          {/* Filtros + Exportar — dentro da área azul */}
+          {/* Filtros + Exportar */}
           <View style={styles.filterRow}>
             <View style={styles.pillGroup}>
               {FILTERS.map((f) => {
@@ -215,44 +199,38 @@ export default function HistoryScreen() {
               accessibilityRole="button"
               accessibilityLabel="Exportar histórico em PDF"
             >
-              <FileDown size={16} color="#FFFFFF" strokeWidth={2} />
+              <FileDown size={16} color={colors.white} strokeWidth={2} />
               <Text style={styles.exportText} allowFontScaling={true}>
                 Exportar PDF
               </Text>
             </Pressable>
           </View>
-        </View>
+        </LinearGradient>
 
-        {/* ──────── Zona de transição (fundo cinza, card sobe com marginTop negativo) ──────── */}
+        {/* ──────── Zona do corpo ──────── */}
         <View style={styles.bodyZone}>
 
-          {/* ──────── 3. Barra de Resumo — overlap card ──────── */}
+          {/* ──────── 3. Barra de Resumo — overlap ──────── */}
           <View style={styles.summaryRow}>
             <View style={styles.summaryBlock}>
               <Text style={[styles.summaryValue, { color: TEXT_PRIMARY }]} allowFontScaling={true}>
                 {totalCount}
               </Text>
-              <Text style={styles.summaryLabel} allowFontScaling={true}>
-                Medições
-              </Text>
+              <Text style={styles.summaryLabel} allowFontScaling={true}>Medições</Text>
             </View>
             <View style={styles.summaryDivider} />
             <View style={styles.summaryBlock}>
-              <Text style={[styles.summaryValue, { color: ORANGE }]} allowFontScaling={true}>
+              <Text style={[styles.summaryValue, { color: colors.amber }]} allowFontScaling={true}>
                 {attentionCount}
               </Text>
-              <Text style={styles.summaryLabel} allowFontScaling={true}>
-                Atenção
-              </Text>
+              <Text style={styles.summaryLabel} allowFontScaling={true}>Atenção</Text>
             </View>
             <View style={styles.summaryDivider} />
             <View style={styles.summaryBlock}>
-              <Text style={[styles.summaryValue, { color: RED }]} allowFontScaling={true}>
+              <Text style={[styles.summaryValue, { color: colors.critical }]} allowFontScaling={true}>
                 {criticalCount}
               </Text>
-              <Text style={styles.summaryLabel} allowFontScaling={true}>
-                Críticos
-              </Text>
+              <Text style={styles.summaryLabel} allowFontScaling={true}>Críticos</Text>
             </View>
           </View>
 
@@ -261,7 +239,6 @@ export default function HistoryScreen() {
             const isExpanded = expandedId === record.id
             return (
               <View key={record.id} style={styles.dayCard}>
-                {/* Header do Card */}
                 <Pressable
                   style={styles.dayCardHeader}
                   onPress={() => toggleCard(record.id)}
@@ -278,27 +255,24 @@ export default function HistoryScreen() {
                     </Text>
                   </View>
                   {isExpanded
-                    ? <ChevronUp size={22} color={TEXT_MUTED} strokeWidth={2} />
+                    ? <ChevronUp   size={22} color={TEXT_MUTED} strokeWidth={2} />
                     : <ChevronDown size={22} color={TEXT_MUTED} strokeWidth={2} />
                   }
                 </Pressable>
 
-                {/* Conteúdo expandido — Grid 2x2 */}
                 {isExpanded && (
                   <View style={styles.vitalsGrid}>
                     {record.vitals.map((vital) => {
-                      const info = TYPE_ICON[vital.type]
-                      const label = TYPE_LABEL[vital.type]
-                      const unit = TYPE_UNIT[vital.type]
+                      const info     = TYPE_ICON[vital.type]
+                      const label    = TYPE_LABEL[vital.type]
+                      const unit     = TYPE_UNIT[vital.type]
                       const valColor = statusColor(vital.status)
 
                       return (
                         <View key={vital.type} style={styles.vitalCell}>
-                          {/* Rótulo com emoji */}
                           <Text style={styles.vitalLabel} allowFontScaling={true}>
                             {info.emoji} {label}
                           </Text>
-                          {/* Valor */}
                           <Text
                             style={[styles.vitalValue, { color: valColor }]}
                             allowFontScaling={true}
@@ -306,7 +280,6 @@ export default function HistoryScreen() {
                           >
                             {vital.value}
                           </Text>
-                          {/* Unidade */}
                           <Text style={styles.vitalUnit} allowFontScaling={true}>
                             {unit}
                           </Text>
@@ -319,7 +292,6 @@ export default function HistoryScreen() {
             )
           })}
 
-          {/* Espaço inferior para não colar no tab bar */}
           <View style={{ height: 32 }} />
         </View>
       </ScrollView>
@@ -330,39 +302,37 @@ export default function HistoryScreen() {
 /* ═══════════════ ESTILOS ═══════════════ */
 
 const styles = StyleSheet.create({
-  /* ── Container raiz ── */
   safe: {
     flex: 1,
-    backgroundColor: BG,
+    backgroundColor: colors.iceBlue,
   },
+  scrollView: { flex: 1 },
+  scrollContent: {},
 
-  /* ── ScrollView ── */
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    // Sem paddingTop — o header faz isso
-  },
-
-  /* ── 1. Header (azul escuro, dentro do scroll) ── */
+  /* ── 1. Header gradiente ── */
   header: {
-    backgroundColor: NAVY,
     paddingHorizontal: 20,
-    paddingTop: 8,
-    paddingBottom: 48,               // Ajustado para 48px para conexão mais elegante
-    gap: 16,                         // Aumentado o gap para separar melhor os elementos internos
+    paddingBottom: 48,
+    gap: 16,
+    borderBottomLeftRadius: 28,
+    borderBottomRightRadius: 28,
+    shadowColor: colors.navy,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    elevation: 12,
   },
   headerTitle: {
     fontSize: 28,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: colors.white,
     letterSpacing: -0.5,
   },
   cloudBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'flex-start',
-    backgroundColor: 'rgba(255, 255, 255, 0.15)', // Fundo azul/branco translúcido
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
@@ -371,11 +341,11 @@ const styles = StyleSheet.create({
   cloudText: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.white,
     opacity: 0.9,
   },
 
-  /* ── 2. Filtros + Exportar (dentro do header azul) ── */
+  /* ── 2. Filtros + Exportar ── */
   filterRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -393,7 +363,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.15)',
   },
   pillActive: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.white,
   },
   pillText: {
     fontSize: 14,
@@ -416,28 +386,28 @@ const styles = StyleSheet.create({
   exportText: {
     fontSize: 13,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: colors.white,
   },
 
-  /* ── Zona do corpo (fundo cinza) ── */
+  /* ── Zona do corpo ── */
   bodyZone: {
-    backgroundColor: BG,
+    backgroundColor: colors.iceBlue,
     paddingHorizontal: 16,
     paddingBottom: 16,
   },
 
-  /* ── 3. Resumo Semântico — overlap card ── */
+  /* ── 3. Resumo — overlap ── */
   summaryRow: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: CARD_BG,
     borderRadius: 14,
     paddingVertical: 16,
-    marginTop: -28,                  // ← Overlap refinado (-28px)
+    marginTop: -28,
     marginBottom: 20,
     borderWidth: 1,
     borderColor: colors.sandy + '55',
-    shadowColor: '#002959',
+    shadowColor: colors.navy,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.08,
     shadowRadius: 12,
@@ -461,7 +431,7 @@ const styles = StyleSheet.create({
   summaryDivider: {
     width: 1,
     height: 32,
-    backgroundColor: BORDER,
+    backgroundColor: colors.border,
   },
 
   /* ── 4. Card diário ── */
@@ -471,7 +441,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderWidth: 1,
     borderColor: colors.sandy + '55',
-    shadowColor: '#002959',
+    shadowColor: colors.navy,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.04,
     shadowRadius: 8,
@@ -502,7 +472,7 @@ const styles = StyleSheet.create({
     color: TEXT_MUTED,
   },
 
-  /* ── Grid de vitais (2 colunas, wrap) ── */
+  /* ── Grid de vitais ── */
   vitalsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -510,13 +480,12 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
     gap: 10,
     borderTopWidth: 1,
-    borderTopColor: BORDER,
+    borderTopColor: colors.border,
     paddingTop: 14,
-    marginHorizontal: 0,
   },
   vitalCell: {
     width: '47%',
-    backgroundColor: '#F8FAFC',
+    backgroundColor: colors.iceBlue,
     borderRadius: 12,
     padding: 14,
     gap: 4,

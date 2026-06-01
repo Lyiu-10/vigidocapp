@@ -1,5 +1,6 @@
 import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { LinearGradient } from 'expo-linear-gradient'
 import {
   Activity,
   MessageCircle,
@@ -11,6 +12,11 @@ import {
 } from 'lucide-react-native'
 import { colors } from '@/lib/constants/colors'
 
+// Azul complementar para gradiente — sem token equivalente em colors.ts
+const GRADIENT_END  = '#0A4A82'
+// Azul claro sobre navy — sem token equivalente em colors.ts
+const SUBTITLE_COLOR = '#B0C4DE'
+
 const MOCK_DOCTOR = {
   name: 'Dr. Carlos Souza',
   specialty: 'Oncologia Clínica',
@@ -21,20 +27,25 @@ const MOCK_DOCTOR = {
 }
 
 export default function DoctorScreen() {
+  const insets = useSafeAreaInsets()
+
   return (
     <View style={styles.root}>
-      <SafeAreaView style={{ backgroundColor: colors.navy }} edges={['top']} />
-
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* 1. Header navy */}
-        <View style={styles.header}>
+        {/* 1. Header com gradiente */}
+        <LinearGradient
+          colors={[colors.navy, GRADIENT_END]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={[styles.header, { paddingTop: insets.top + 12 }]}
+        >
           <Text style={styles.headerTitle}>Meu Médico</Text>
           <Text style={styles.headerSubtitle}>Acompanhamento e monitoramento</Text>
-        </View>
+        </LinearGradient>
 
         {/* 2. Card de perfil com overlap */}
         <View style={styles.profileCard}>
@@ -155,10 +166,15 @@ const styles = StyleSheet.create({
 
   // Header
   header: {
-    backgroundColor: colors.navy,
     paddingHorizontal: 20,
-    paddingTop: 12,
     paddingBottom: 52,
+    borderBottomLeftRadius: 28,
+    borderBottomRightRadius: 28,
+    shadowColor: colors.navy,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    elevation: 12,
   },
   headerTitle: {
     fontSize: 28,
@@ -169,7 +185,7 @@ const styles = StyleSheet.create({
   headerSubtitle: {
     fontSize: 13,
     fontWeight: '400',
-    color: '#B0C4DE',
+    color: SUBTITLE_COLOR,
     marginTop: 4,
   },
 
