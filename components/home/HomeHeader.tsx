@@ -13,14 +13,7 @@ const SUBTITLE_COLOR = '#B0C4DE'
 // Azul complementar para gradiente do header — sem token equivalente em colors.ts
 const GRADIENT_END = '#0A4A82'
 
-function getInitials(name: string): string {
-  return name
-    .trim()
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((w) => w[0]?.toUpperCase() ?? '')
-    .join('')
-}
+
 
 function getGreeting(name: string, hours: number): string {
   const firstName = name.trim().split(/\s+/)[0] ?? name
@@ -37,11 +30,10 @@ function formatTime(date: Date): string {
 
 interface HomeHeaderProps {
   userName: string
-  onAvatarPress: () => void
   measurementCount: number
 }
 
-export function HomeHeader({ userName, onAvatarPress, measurementCount }: HomeHeaderProps) {
+export function HomeHeader({ userName, measurementCount }: HomeHeaderProps) {
   const insets = useSafeAreaInsets()
   const [now, setNow] = useState(() => new Date())
 
@@ -50,7 +42,7 @@ export function HomeHeader({ userName, onAvatarPress, measurementCount }: HomeHe
     return () => clearInterval(id)
   }, [])
 
-  const initials         = getInitials(userName)
+
   const greeting         = getGreeting(userName, now.getHours())
   const timeStr          = formatTime(now)
   const measurementLabel = measurementCount === 1
@@ -80,16 +72,7 @@ export function HomeHeader({ userName, onAvatarPress, measurementCount }: HomeHe
 
         <HelpButton tourId="home" />
 
-        <Pressable
-          style={({ pressed }) => [styles.avatarTouchable, pressed && { opacity: 0.8 }]}
-          onPress={onAvatarPress}
-          accessibilityLabel="Abrir perfil"
-          accessibilityRole="button"
-        >
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>{initials}</Text>
-          </View>
-        </Pressable>
+
       </View>
 
       {/* CTA principal — visualmente faz parte do header (mesmo fundo navy) */}
@@ -100,7 +83,6 @@ export function HomeHeader({ userName, onAvatarPress, measurementCount }: HomeHe
           accessibilityRole="button"
           accessibilityLabel="Registrar nova medição"
         >
-          <Plus size={22} color={colors.white} strokeWidth={2.5} />
           <Text style={styles.ctaText}>Registrar medição</Text>
         </Pressable>
       </TutorialHighlight>
@@ -142,26 +124,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     color: SUBTITLE_COLOR,
   },
-  avatarTouchable: {
-    minWidth: 48,
-    minHeight: 48,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.cerulean,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarText: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: colors.white,
-    letterSpacing: 0.5,
-  },
+
   cta: {
     backgroundColor: colors.cerulean,
     height: 56,

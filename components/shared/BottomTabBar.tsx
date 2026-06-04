@@ -1,6 +1,6 @@
 import { View, Text, Pressable, StyleSheet, useColorScheme } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { Home, Clock, Bell, Stethoscope } from 'lucide-react-native'
+import { Home, Clock, Bell, Grid } from 'lucide-react-native'
 import type { BottomTabBarProps } from '@react-navigation/bottom-tabs'
 import type { LucideIcon } from 'lucide-react-native'
 import { colors } from '@/lib/constants/colors'
@@ -18,7 +18,7 @@ const TAB_CONFIG: Record<string, { label: string; Icon: LucideIcon }> = {
   index:         { label: 'Início',       Icon: Home },
   history:       { label: 'Histórico',    Icon: Clock },
   notifications: { label: 'Notificações', Icon: Bell },
-  doctor:        { label: 'Meu Médico',   Icon: Stethoscope },
+  more:          { label: 'Mais',         Icon: Grid },
 }
 
 interface Props extends BottomTabBarProps {

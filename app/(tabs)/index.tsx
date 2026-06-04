@@ -5,7 +5,6 @@ import { HomeHeader } from '@/components/home/HomeHeader'
 import { DailyProgressCard } from '@/components/home/DailyProgressCard'
 import { PainelRotinaDiaria } from '@/components/home/PainelRotinaDiaria'
 import { RecentMeasurements } from '@/components/home/RecentMeasurements'
-import { ProfileBottomSheet } from '@/components/shared/ProfileBottomSheet'
 import { TutorialHighlight } from '@/components/shared/TutorialHighlight'
 import { useTutorialStore } from '@/store/tutorial.store'
 import { useMeasurementStore } from '@/store/measurement.store'
@@ -15,7 +14,6 @@ const DARK_BG = '#0F172A'
 
 export default function HomeScreen() {
   const isDark            = useColorScheme() === 'dark'
-  const [profileVisible, setProfileVisible] = useState(false)
 
   const _hydrated          = useTutorialStore((s) => s._hydrated)
   const homeTourCompleted  = useTutorialStore((s) => s.homeTourCompleted)
@@ -39,7 +37,6 @@ export default function HomeScreen() {
       <HomeHeader
         userName={userName}
         measurementCount={dailyProgress.completed}
-        onAvatarPress={() => setProfileVisible(true)}
       />
       <ScrollView
         contentContainerStyle={styles.scrollContent}
@@ -71,15 +68,6 @@ export default function HomeScreen() {
         />
       </ScrollView>
 
-      <ProfileBottomSheet
-        visible={profileVisible}
-        onClose={() => setProfileVisible(false)}
-        userName={userName}
-        userEmail="claudio@email.com"
-        currentTheme={isDark ? 'dark' : 'light'}
-        onThemeChange={() => {}} // TODO: link com sistema de tema real
-        onSettingsPress={() => {}}
-      />
     </View>
   )
 }

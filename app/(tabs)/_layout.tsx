@@ -25,8 +25,8 @@ export default function TabsLayout() {
         options={{ title: 'Notificações', tabBarAccessibilityLabel: 'Ver notificações' }}
       />
       <Tabs.Screen
-        name="doctor"
-        options={{ title: 'Meu Médico', tabBarAccessibilityLabel: 'Ver informações do meu médico' }}
+        name="more"
+        options={{ title: 'Mais', tabBarAccessibilityLabel: 'Ver mais opções' }}
       />
     </Tabs>
   )

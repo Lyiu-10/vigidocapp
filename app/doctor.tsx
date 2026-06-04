@@ -2,8 +2,6 @@ import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { LinearGradient } from 'expo-linear-gradient'
 import {
-  Activity,
-  MessageCircle,
   Clock,
   ShieldCheck,
   FileText,
@@ -11,6 +9,7 @@ import {
   Building2,
 } from 'lucide-react-native'
 import { colors } from '@/lib/constants/colors'
+import { HeaderBackButton } from '@/components/shared/HeaderBackButton'
 
 // Azul complementar para gradiente — sem token equivalente em colors.ts
 const GRADIENT_END  = '#0A4A82'
@@ -31,21 +30,28 @@ export default function DoctorScreen() {
 
   return (
     <View style={styles.root}>
+      {/* 1. Header com gradiente */}
+      <LinearGradient
+        colors={[colors.navy, GRADIENT_END]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={[
+          styles.header,
+          { paddingTop: insets.top + 16, minHeight: insets.top + 140 },
+        ]}
+      >
+        <HeaderBackButton />
+        <View>
+          <Text style={styles.headerTitle}>Meu Médico</Text>
+          <Text style={styles.headerSubtitle}>Acompanhamento e monitoramento</Text>
+        </View>
+      </LinearGradient>
+
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* 1. Header com gradiente */}
-        <LinearGradient
-          colors={[colors.navy, GRADIENT_END]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={[styles.header, { paddingTop: insets.top + 12 }]}
-        >
-          <Text style={styles.headerTitle}>Meu Médico</Text>
-          <Text style={styles.headerSubtitle}>Acompanhamento e monitoramento</Text>
-        </LinearGradient>
 
         {/* 2. Card de perfil com overlap */}
         <View style={styles.profileCard}>
@@ -71,34 +77,7 @@ export default function DoctorScreen() {
 
         </View>
 
-        {/* 3. Botões de ação */}
-        <View style={styles.actionsRow}>
-          <Pressable
-            style={({ pressed }) => [
-              styles.actionBtn,
-              styles.actionBtnPrimary,
-              pressed && { opacity: 0.75 },
-            ]}
-            accessibilityRole="button"
-            accessibilityLabel="Ver monitoramento com meu médico"
-          >
-            <Activity size={18} color={colors.white} strokeWidth={2} />
-            <Text style={styles.actionBtnPrimaryText}>Monitoramento</Text>
-          </Pressable>
 
-          <Pressable
-            style={({ pressed }) => [
-              styles.actionBtn,
-              styles.actionBtnSecondary,
-              pressed && { opacity: 0.75 },
-            ]}
-            accessibilityRole="button"
-            accessibilityLabel="Falar com meu médico"
-          >
-            <MessageCircle size={18} color={colors.cerulean} strokeWidth={2} />
-            <Text style={styles.actionBtnSecondaryText}>Falar com médico</Text>
-          </Pressable>
-        </View>
 
         {/* 4. Atendimento Integrado */}
         <View style={styles.section}>
@@ -167,7 +146,7 @@ const styles = StyleSheet.create({
   // Header
   header: {
     paddingHorizontal: 20,
-    paddingBottom: 52,
+    paddingBottom: 32,
     borderBottomLeftRadius: 28,
     borderBottomRightRadius: 28,
     shadowColor: colors.navy,
@@ -175,9 +154,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 16,
     elevation: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
   },
   headerTitle: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: '800',
     color: colors.white,
     letterSpacing: -0.5,
@@ -195,7 +177,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 24,
     marginHorizontal: 16,
-    marginTop: -28,
+    marginTop: -16,
     alignItems: 'center',
     borderWidth: 1,
     borderColor: colors.sandy + '55',

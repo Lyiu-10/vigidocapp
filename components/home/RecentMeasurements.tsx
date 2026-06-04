@@ -304,7 +304,8 @@ function SkeletonCard({
   style,
   bg,
 }: {
-  style: ReturnType<typeof useAnimatedStyle>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  style: any
   bg: string
 }) {
   return (

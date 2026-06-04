@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import {
   View,
   Text,
@@ -28,38 +28,38 @@ import type { MeasurementType, HealthStatus } from '@/types/domain'
 // Azul complementar para gradiente — sem token equivalente em colors.ts
 const GRADIENT_END = '#0A4A82'
 
-const NAVY      = colors.navy
-const CARD_BG   = colors.white
+const NAVY = colors.navy
+const CARD_BG = colors.white
 const TEXT_PRIMARY = '#1E293B'
-const TEXT_MUTED   = '#64748B'
+const TEXT_MUTED = '#64748B'
 
 /* ─────────────────── Ícone por tipo ──────────────────── */
 
 const TYPE_ICON: Record<MeasurementType, { Icon: typeof Heart; emoji: string }> = {
-  blood_pressure:    { Icon: Activity,    emoji: '🩺' },
-  heart_rate:        { Icon: Heart,       emoji: '❤️' },
-  temperature:       { Icon: Thermometer, emoji: '🌡️' },
-  oxygen_saturation: { Icon: Wind,        emoji: '🫁' },
-  glucose:           { Icon: Droplets,    emoji: '🩸' },
-  weight:            { Icon: Scale,       emoji: '⚖️' },
+  blood_pressure: { Icon: Activity, emoji: '🩺' },
+  heart_rate: { Icon: Heart, emoji: '❤️' },
+  temperature: { Icon: Thermometer, emoji: '🌡️' },
+  oxygen_saturation: { Icon: Wind, emoji: '🫁' },
+  glucose: { Icon: Droplets, emoji: '🩸' },
+  weight: { Icon: Scale, emoji: '⚖️' },
 }
 
 const TYPE_LABEL: Record<MeasurementType, string> = {
-  blood_pressure:    'Pressão Arterial',
-  heart_rate:        'Freq. Cardíaca',
-  temperature:       'Temperatura',
+  blood_pressure: 'Pressão Arterial',
+  heart_rate: 'Freq. Cardíaca',
+  temperature: 'Temperatura',
   oxygen_saturation: 'Oxigenação',
-  glucose:           'Glicose',
-  weight:            'Peso',
+  glucose: 'Glicose',
+  weight: 'Peso',
 }
 
 const TYPE_UNIT: Record<MeasurementType, string> = {
-  blood_pressure:    'mmHg',
-  heart_rate:        'BPM',
-  temperature:       '°C',
+  blood_pressure: 'mmHg',
+  heart_rate: 'BPM',
+  temperature: '°C',
   oxygen_saturation: 'SpO₂ %',
-  glucose:           'mg/dL',
-  weight:            'kg',
+  glucose: 'mg/dL',
+  weight: 'kg',
 }
 
 /* ─────────── Dados (store) ─────────── */
@@ -67,15 +67,15 @@ const TYPE_UNIT: Record<MeasurementType, string> = {
 import { useMeasurementStore } from '@/store/measurement.store'
 
 interface VitalItem {
-  type:   MeasurementType
-  value:  string
+  type: MeasurementType
+  value: string
   status: HealthStatus
 }
 
 interface DailyRecord {
-  id:     string
-  date:   string
-  time:   string
+  id: string
+  date: string
+  time: string
   vitals: VitalItem[]
 }
 
@@ -83,9 +83,9 @@ interface DailyRecord {
 
 function statusColor(status: HealthStatus): string {
   switch (status) {
-    case 'normal':    return colors.esmeralda
+    case 'normal': return colors.esmeralda
     case 'attention': return colors.amber
-    case 'critical':  return colors.critical
+    case 'critical': return colors.critical
   }
 }
 
@@ -93,7 +93,7 @@ function statusColor(status: HealthStatus): string {
 
 type FilterKey = '7d' | '30d' | '90d'
 const FILTERS: { key: FilterKey; label: string }[] = [
-  { key: '7d',  label: '7d'  },
+  { key: '7d', label: '7d' },
   { key: '30d', label: '30d' },
   { key: '90d', label: '90d' },
 ]
@@ -103,7 +103,7 @@ const FILTERS: { key: FilterKey; label: string }[] = [
 export default function HistoryScreen() {
   const insets = useSafeAreaInsets()
   const [activeFilter, setActiveFilter] = useState<FilterKey>('7d')
-  const [expandedId,   setExpandedId]   = useState<string | null>(null)
+  const [expandedId, setExpandedId] = useState<string | null>(null)
 
   const records = useMeasurementStore((s) => s.records)
 
@@ -111,8 +111,8 @@ export default function HistoryScreen() {
     const map = new Map<string, DailyRecord>()
 
     records.forEach(r => {
-      const d       = new Date(r.measuredAt)
-      const dayStr  = d.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', '')
+      const d = new Date(r.measuredAt)
+      const dayStr = d.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', '')
       const dateNum = d.getDate()
       const monthStr = d.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '')
 
@@ -129,16 +129,19 @@ export default function HistoryScreen() {
     return Array.from(map.values())
   }, [records])
 
-  const allVitals      = groupedRecords.flatMap((r) => r.vitals)
-  const totalCount     = allVitals.length
+  const allVitals = groupedRecords.flatMap((r) => r.vitals)
+  const totalCount = allVitals.length
   const attentionCount = allVitals.filter((v) => v.status === 'attention').length
-  const criticalCount  = allVitals.filter((v) => v.status === 'critical').length
+  const criticalCount = allVitals.filter((v) => v.status === 'critical').length
+
+  const initializedRef = useRef(false)
 
   useEffect(() => {
-    if (expandedId === null && groupedRecords.length > 0) {
+    if (!initializedRef.current && groupedRecords.length > 0) {
       setExpandedId(groupedRecords[0].id)
+      initializedRef.current = true
     }
-  }, [expandedId, groupedRecords])
+  }, [groupedRecords])
 
   function toggleCard(id: string) {
     setExpandedId((prev) => (prev === id ? null : id))
@@ -146,67 +149,60 @@ export default function HistoryScreen() {
 
   return (
     <View style={styles.safe}>
+      {/* ──────── 1. Header com gradiente ──────── */}
+      <LinearGradient
+        colors={[colors.navy, GRADIENT_END]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={[styles.header, { paddingTop: insets.top + 16 }]}
+      >
+        <Text style={styles.headerTitle} allowFontScaling={true}>
+          Histórico
+        </Text>
+
+        {/* Filtros + Exportar */}
+        <View style={styles.filterRow}>
+          <View style={styles.pillGroup}>
+            {FILTERS.map((f) => {
+              const isActive = activeFilter === f.key
+              return (
+                <Pressable
+                  key={f.key}
+                  style={[styles.pill, isActive && styles.pillActive]}
+                  onPress={() => setActiveFilter(f.key)}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Filtrar por ${f.label}`}
+                  accessibilityState={{ selected: isActive }}
+                >
+                  <Text
+                    style={[styles.pillText, isActive && styles.pillTextActive]}
+                    allowFontScaling={true}
+                  >
+                    {f.label}
+                  </Text>
+                </Pressable>
+              )
+            })}
+          </View>
+
+          <Pressable
+            style={({ pressed }) => [styles.exportBtn, pressed && { opacity: 0.7 }]}
+            accessibilityRole="button"
+            accessibilityLabel="Exportar histórico em PDF"
+          >
+            <FileDown size={16} color={colors.white} strokeWidth={2} />
+            <Text style={styles.exportText} allowFontScaling={true}>
+              Exportar PDF
+            </Text>
+          </Pressable>
+        </View>
+      </LinearGradient>
+
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* ──────── 1. Header com gradiente ──────── */}
-        <LinearGradient
-          colors={[colors.navy, GRADIENT_END]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={[styles.header, { paddingTop: insets.top + 16 }]}
-        >
-          <Text style={styles.headerTitle} allowFontScaling={true}>
-            Histórico
-          </Text>
-
-          <View style={styles.cloudBadge}>
-            <CloudCheck size={14} color={colors.white} strokeWidth={2} />
-            <Text style={styles.cloudText} allowFontScaling={true}>
-              Sincronizado e salvo na nuvem
-            </Text>
-          </View>
-
-          {/* Filtros + Exportar */}
-          <View style={styles.filterRow}>
-            <View style={styles.pillGroup}>
-              {FILTERS.map((f) => {
-                const isActive = activeFilter === f.key
-                return (
-                  <Pressable
-                    key={f.key}
-                    style={[styles.pill, isActive && styles.pillActive]}
-                    onPress={() => setActiveFilter(f.key)}
-                    accessibilityRole="button"
-                    accessibilityLabel={`Filtrar por ${f.label}`}
-                    accessibilityState={{ selected: isActive }}
-                  >
-                    <Text
-                      style={[styles.pillText, isActive && styles.pillTextActive]}
-                      allowFontScaling={true}
-                    >
-                      {f.label}
-                    </Text>
-                  </Pressable>
-                )
-              })}
-            </View>
-
-            <Pressable
-              style={({ pressed }) => [styles.exportBtn, pressed && { opacity: 0.7 }]}
-              accessibilityRole="button"
-              accessibilityLabel="Exportar histórico em PDF"
-            >
-              <FileDown size={16} color={colors.white} strokeWidth={2} />
-              <Text style={styles.exportText} allowFontScaling={true}>
-                Exportar PDF
-              </Text>
-            </Pressable>
-          </View>
-        </LinearGradient>
-
         {/* ──────── Zona do corpo ──────── */}
         <View style={styles.bodyZone}>
 
@@ -255,7 +251,7 @@ export default function HistoryScreen() {
                     </Text>
                   </View>
                   {isExpanded
-                    ? <ChevronUp   size={22} color={TEXT_MUTED} strokeWidth={2} />
+                    ? <ChevronUp size={22} color={TEXT_MUTED} strokeWidth={2} />
                     : <ChevronDown size={22} color={TEXT_MUTED} strokeWidth={2} />
                   }
                 </Pressable>
@@ -263,9 +259,9 @@ export default function HistoryScreen() {
                 {isExpanded && (
                   <View style={styles.vitalsGrid}>
                     {record.vitals.map((vital) => {
-                      const info     = TYPE_ICON[vital.type]
-                      const label    = TYPE_LABEL[vital.type]
-                      const unit     = TYPE_UNIT[vital.type]
+                      const info = TYPE_ICON[vital.type]
+                      const label = TYPE_LABEL[vital.type]
+                      const unit = TYPE_UNIT[vital.type]
                       const valColor = statusColor(vital.status)
 
                       return (
@@ -312,7 +308,7 @@ const styles = StyleSheet.create({
   /* ── 1. Header gradiente ── */
   header: {
     paddingHorizontal: 20,
-    paddingBottom: 48,
+    paddingBottom: 32,
     gap: 16,
     borderBottomLeftRadius: 28,
     borderBottomRightRadius: 28,
@@ -403,7 +399,7 @@ const styles = StyleSheet.create({
     backgroundColor: CARD_BG,
     borderRadius: 14,
     paddingVertical: 16,
-    marginTop: -28,
+    marginTop: -16,
     marginBottom: 20,
     borderWidth: 1,
     borderColor: colors.sandy + '55',

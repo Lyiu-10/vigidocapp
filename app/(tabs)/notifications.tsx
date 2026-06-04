@@ -1,13 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, StyleSheet, ScrollView } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { LinearGradient } from 'expo-linear-gradient'
 import { colors } from '@/lib/constants/colors'
-
-// Azul complementar para gradiente — sem token equivalente em colors.ts
-const GRADIENT_END = '#0A4A82'
-
-const TEXT_MUTED = '#64748B'
 
 const SCHEDULED_TIMES = ['08:00', '14:00', '22:00']
 
@@ -26,12 +20,12 @@ function getTimeDifferenceString(target: Date, now: Date) {
   if (diffMs < 0) diffMs = 0
 
   const totalMins = Math.floor(diffMs / 1000 / 60)
-  const hours     = Math.floor(totalMins / 60)
-  const minutes   = totalMins % 60
+  const hours = Math.floor(totalMins / 60)
+  const minutes = totalMins % 60
 
   if (hours > 0 && minutes > 0) return `Daqui a ${hours}h ${minutes}min`
-  if (hours > 0)                 return `Daqui a ${hours}h`
-  if (minutes > 0)               return `Daqui a ${minutes}min`
+  if (hours > 0) return `Daqui a ${hours}h`
+  if (minutes > 0) return `Daqui a ${minutes}min`
   return 'Agora mesmo'
 }
 
@@ -50,28 +44,23 @@ export default function NotificationsScreen() {
   }))
   occurrences.sort((a, b) => a.date.getTime() - b.date.getTime())
 
-  const mainAlarm   = occurrences[0]
+  const mainAlarm = occurrences[0]
   const queueAlarms = occurrences.slice(1)
 
   return (
     <View style={styles.container}>
+      {/* ──────── Header ──────── */}
+      <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
+        <Text style={styles.title} accessible={true} accessibilityRole="header">
+          Notificações
+        </Text>
+      </View>
+
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
       >
-        {/* ──────── Header com gradiente ──────── */}
-        <LinearGradient
-          colors={[colors.navy, GRADIENT_END]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={[styles.header, { paddingTop: insets.top + 16 }]}
-        >
-          <Text style={styles.title} accessible={true} accessibilityRole="header">
-            Notificações
-          </Text>
-        </LinearGradient>
-
         {/* ──────── Zona de transição ──────── */}
         <View style={styles.bodyZone}>
 
@@ -145,11 +134,11 @@ const styles = StyleSheet.create({
   scrollView: { flex: 1 },
   scrollContent: {},
 
-  /* ── Header gradiente ── */
+  /* ── Header ── */
   header: {
+    backgroundColor: colors.navy,
     paddingHorizontal: 20,
-    paddingBottom: 48,
-    gap: 12,
+    paddingBottom: 32,
     borderBottomLeftRadius: 28,
     borderBottomRightRadius: 28,
     shadowColor: colors.navy,
@@ -173,7 +162,7 @@ const styles = StyleSheet.create({
   },
 
   agendaSection: {
-    marginTop: -28,
+    marginTop: -16,
   },
   agendaHeader: {
     flexDirection: 'row',
@@ -185,7 +174,7 @@ const styles = StyleSheet.create({
   agendaTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: TEXT_MUTED,
+    color: colors.placeholder,
   },
   badge: {
     backgroundColor: colors.border,
@@ -241,7 +230,7 @@ const styles = StyleSheet.create({
   },
   cardBottomText: {
     fontSize: 14,
-    color: TEXT_MUTED,
+    color: colors.placeholder,
     fontWeight: '600',
   },
 
@@ -253,7 +242,7 @@ const styles = StyleSheet.create({
   queueTitle: {
     fontSize: 15,
     fontWeight: '600',
-    color: TEXT_MUTED,
+    color: colors.placeholder,
     marginBottom: 4,
   },
   miniCard: {
