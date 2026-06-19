@@ -8,10 +8,10 @@ import { colors } from '@/lib/constants/colors'
 import { HelpButton } from '@/components/shared/HelpButton'
 import { TutorialHighlight } from '@/components/shared/TutorialHighlight'
 
-// Azul claro suave sobre navy — especificado no design mas sem token equivalente em colors.ts
-const SUBTITLE_COLOR = '#B0C4DE'
-// Azul complementar para gradiente do header — sem token equivalente em colors.ts
-const GRADIENT_END = '#0A4A82'
+// Azul claro suave sobre navy — especificado no design
+const SUBTITLE_COLOR = colors.coolHorizon
+// Azul complementar para gradiente do header
+const GRADIENT_END = colors.cerulean
 
 
 
@@ -94,15 +94,12 @@ export function HomeHeader({ userName, measurementCount }: HomeHeaderProps) {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
-    paddingBottom: 32,
+    paddingBottom: 24,
     gap: 16,
     borderBottomLeftRadius: 28,
     borderBottomRightRadius: 28,
-    shadowColor: colors.navy,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.25,
-    shadowRadius: 16,
-    elevation: 12,
+    zIndex: 10,
+    elevation: 10,
   },
   row: {
     flexDirection: 'row',

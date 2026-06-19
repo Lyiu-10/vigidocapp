@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react'
 import { View, Text, StyleSheet, ScrollView } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { colors } from '@/lib/constants/colors'
+import { LinearGradient } from 'expo-linear-gradient'
+
+const GRADIENT_END = colors.cerulean
 
 const SCHEDULED_TIMES = ['08:00', '14:00', '22:00']
 
@@ -49,18 +52,28 @@ export default function NotificationsScreen() {
 
   return (
     <View style={styles.container}>
-      {/* ──────── Header ──────── */}
-      <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
-        <Text style={styles.title} accessible={true} accessibilityRole="header">
-          Notificações
-        </Text>
-      </View>
-
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
       >
+        <LinearGradient
+          colors={[colors.navy, GRADIENT_END]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={[
+            styles.header,
+            { paddingTop: insets.top + 16 },
+          ]}
+        >
+          <View style={styles.headerInfo}>
+            <Text style={styles.title} accessible={true} accessibilityRole="header">
+              Notificações
+            </Text>
+            <Text style={styles.subtitle}>Gerencie seus lembretes e horários</Text>
+          </View>
+        </LinearGradient>
+
         {/* ──────── Zona de transição ──────── */}
         <View style={styles.bodyZone}>
 
@@ -136,22 +149,27 @@ const styles = StyleSheet.create({
 
   /* ── Header ── */
   header: {
-    backgroundColor: colors.navy,
     paddingHorizontal: 20,
-    paddingBottom: 32,
+    paddingBottom: 24,
     borderBottomLeftRadius: 28,
     borderBottomRightRadius: 28,
-    shadowColor: colors.navy,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.25,
-    shadowRadius: 16,
-    elevation: 12,
+    justifyContent: 'flex-end',
+    zIndex: 10,
+    elevation: 10,
   },
   title: {
     fontSize: 28,
     fontWeight: '800',
     color: colors.white,
     letterSpacing: -0.5,
+  },
+  headerInfo: {
+    gap: 4,
+  },
+  subtitle: {
+    fontSize: 13,
+    fontWeight: '400',
+    color: colors.coolHorizon,
   },
 
   /* ── Zona do corpo ── */
@@ -162,7 +180,10 @@ const styles = StyleSheet.create({
   },
 
   agendaSection: {
-    marginTop: -16,
+    marginTop: -24,
+    paddingTop: 24,
+    zIndex: 1,
+    elevation: 1,
   },
   agendaHeader: {
     flexDirection: 'row',

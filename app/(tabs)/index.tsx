@@ -34,14 +34,14 @@ export default function HomeScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: isDark ? DARK_BG : colors.iceBlue }]}>
-      <HomeHeader
-        userName={userName}
-        measurementCount={dailyProgress.completed}
-      />
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
+        <HomeHeader
+          userName={userName}
+          measurementCount={dailyProgress.completed}
+        />
         <View style={styles.overlapCard}>
           <TutorialHighlight tourId="home" stepIndex={0} borderRadius={24}>
             <PainelRotinaDiaria
@@ -52,7 +52,7 @@ export default function HomeScreen() {
             />
           </TutorialHighlight>
         </View>
-        <View style={styles.overlapCard}>
+        <View style={styles.standardCard}>
           <TutorialHighlight tourId="home" stepIndex={2} borderRadius={16}>
             <DailyProgressCard
               completed={dailyProgress.completed}
@@ -80,6 +80,12 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
   overlapCard: {
-    marginTop: -16,
+    marginTop: -24,
+    zIndex: 1,
+    elevation: 1,
+    paddingTop: 24,
+  },
+  standardCard: {
+    marginTop: 16,
   },
 })

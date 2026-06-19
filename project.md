@@ -47,7 +47,7 @@ DailyLog (Check-in diário)
 HealthMeasurement (Medição de saúde)
   ├── id: string (UUID v4)
   ├── userId: string
-  ├── type: 'blood_pressure' | 'heart_rate' | 'temperature' | 'glucose' | 'oxygen_saturation' | 'weight'
+  ├── type: 'blood_pressure' | 'heart_rate' | 'temperature' | 'pain_level' | 'oxygen_saturation' | 'weight'
   ├── value: number | string
   ├── unit: string
   ├── status: 'normal' | 'attention' | 'critical'

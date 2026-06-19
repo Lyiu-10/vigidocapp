@@ -1,4 +1,4 @@
-import { Activity, Heart, Thermometer, Wind, Droplets, Scale } from 'lucide-react-native'
+import { Activity, Heart, Thermometer, Wind, Frown, Scale } from 'lucide-react-native'
 import type { LucideIcon } from 'lucide-react-native'
 import { colors } from '@/lib/constants/colors'
 import type { MeasurementType } from '@/types/domain'
@@ -61,15 +61,15 @@ export const MEASUREMENT_CONFIG: Record<MeasurementType, MeasurementTypeConfig> 
       'Fique imóvel durante a leitura',
     ],
   },
-  glucose: {
-    label: 'Glicose',
-    unit:  'mg/dL',
-    Icon:  Droplets,
-    color: colors.esmeralda,
+  pain_level: {
+    label: 'Nível de Dor',
+    unit:  '1–10',
+    Icon:  Frown,
+    color: colors.critical,
     instructions: [
-      'Lave e seque bem as mãos',
-      'Use uma lanceta nova',
-      'Coloque a gota de sangue na fita',
+      'Avalie sua dor de 1 (leve) a 10 (insuportável)',
+      'Escolha o valor que melhor representa seu estado',
+      'Mantenha a calma e respire fundo',
     ],
   },
   weight: {
@@ -93,6 +93,6 @@ export const VALIDATION_RANGES: Partial<Record<MeasurementType, ValidationRange>
   heart_rate:        { min: 30,  max: 220 },
   temperature:       { min: 34,  max: 42  },
   oxygen_saturation: { min: 70,  max: 100 },
-  glucose:           { min: 20,  max: 600 },
+  pain_level:        { min: 1,  max: 10 },
   weight:            { min: 20,  max: 300 },
 }

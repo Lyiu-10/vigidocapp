@@ -5,8 +5,8 @@ import { User, CreditCard, Stethoscope, HelpCircle, MessageSquare, ChevronRight 
 import { colors } from '@/lib/constants/colors'
 import { router } from 'expo-router'
 
-const GRADIENT_END = '#0A4A82'
-const SUBTITLE_COLOR = '#B0C4DE'
+const GRADIENT_END = colors.cerulean
+const SUBTITLE_COLOR = colors.coolHorizon
 
 const MENU_ITEMS = [
   {
@@ -44,28 +44,29 @@ export default function MoreScreen() {
 
   return (
     <View style={styles.root}>
-      {/* ──────── Header ──────── */}
-      <LinearGradient
-        colors={[colors.navy, GRADIENT_END]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={[
-          styles.header,
-          { paddingTop: insets.top + 16, minHeight: insets.top + 140 },
-        ]}
-      >
-        <Text style={styles.headerTitle} accessible={true} accessibilityRole="header">
-          Mais Opções
-        </Text>
-        <Text style={styles.headerSubtitle}>Gerencie sua conta e suporte</Text>
-      </LinearGradient>
-
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.menuContainer}>
+        {/* ──────── Header ──────── */}
+        <LinearGradient
+          colors={[colors.navy, GRADIENT_END]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={[
+            styles.header,
+            { paddingTop: insets.top + 16 },
+          ]}
+        >
+          <Text style={styles.headerTitle} accessible={true} accessibilityRole="header">
+            Mais Opções
+          </Text>
+          <Text style={styles.headerSubtitle}>Gerencie sua conta e suporte</Text>
+        </LinearGradient>
+
+        <View style={styles.bodyZone}>
+          <View style={styles.menuContainer}>
           {MENU_ITEMS.map((item, index) => {
             const isLast = index === MENU_ITEMS.length - 1
             return (
@@ -106,6 +107,7 @@ export default function MoreScreen() {
             <Text style={styles.supportSubtitle}>Nossa equipe está pronta para te ajudar via chat.</Text>
           </View>
         </Pressable>
+        </View>
 
       </ScrollView>
     </View>
@@ -119,14 +121,11 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: 20,
-    paddingBottom: 32,
+    paddingBottom: 24,
     borderBottomLeftRadius: 28,
     borderBottomRightRadius: 28,
-    shadowColor: colors.navy,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.25,
-    shadowRadius: 16,
-    elevation: 12,
+    zIndex: 10,
+    elevation: 10,
   },
   headerTitle: {
     fontSize: 28,
@@ -144,14 +143,18 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: 20,
     paddingBottom: 100,
-    paddingTop: 16,
+  },
+  bodyZone: {
+    paddingHorizontal: 20,
   },
   menuContainer: {
     backgroundColor: colors.white,
     borderRadius: 20,
-    marginTop: -32,
+    marginTop: -24,
+    paddingTop: 24,
+    zIndex: 1,
+    elevation: 1,
     shadowColor: colors.navy,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.05,

@@ -17,7 +17,7 @@ import {
   Heart,
   Thermometer,
   Wind,
-  Droplets,
+  Frown,
   Scale,
 } from 'lucide-react-native'
 import type { LucideIcon } from 'lucide-react-native'
@@ -31,7 +31,7 @@ const TYPE_ICONS: Record<MeasurementType, LucideIcon> = {
   heart_rate:        Heart,
   temperature:       Thermometer,
   oxygen_saturation: Wind,
-  glucose:           Droplets,
+  pain_level:        Frown,
   weight:            Scale,
 }
 
@@ -40,7 +40,7 @@ const TYPE_LABELS: Record<MeasurementType, string> = {
   heart_rate:        'Freq. Cardíaca',
   temperature:       'Temperatura',
   oxygen_saturation: 'Saturação O₂',
-  glucose:           'Glicemia',
+  pain_level:        'Nível de Dor',
   weight:            'Peso',
 }
 
@@ -49,7 +49,7 @@ const TYPE_BG_COLORS: Record<MeasurementType, string> = {
   heart_rate:        colors.critical     + '18',
   temperature:       colors.amber        + '20',
   oxygen_saturation: colors.coolHorizon  + '22',
-  glucose:           colors.esmeralda    + '20',
+  pain_level:        colors.critical     + '18',
   weight:            colors.cerulean     + '20',
 }
 

@@ -6,7 +6,7 @@ import { Send } from 'lucide-react-native'
 import { colors } from '@/lib/constants/colors'
 import { HeaderBackButton } from '@/components/shared/HeaderBackButton'
 
-const GRADIENT_END = '#0A4A82'
+const GRADIENT_END = colors.cerulean
 
 interface Message {
   id: string
@@ -61,7 +61,10 @@ export default function ChatScreen() {
         colors={[colors.navy, GRADIENT_END]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={[styles.header, { paddingTop: insets.top + 16 }]}
+        style={[
+          styles.header,
+          { paddingTop: insets.top + 16, minHeight: insets.top + 140 },
+        ]}
       >
         <HeaderBackButton />
         <View style={styles.headerInfo}>
@@ -155,7 +158,7 @@ const styles = StyleSheet.create({
   // Header
   header: {
     paddingHorizontal: 20,
-    paddingBottom: 20,
+    paddingBottom: 32,
     borderBottomLeftRadius: 28,
     borderBottomRightRadius: 28,
     shadowColor: colors.navy,
@@ -190,7 +193,7 @@ const styles = StyleSheet.create({
   },
   onlineText: {
     fontSize: 13,
-    color: '#B0C4DE',
+    color: colors.coolHorizon,
     fontWeight: '500',
   },
 

@@ -4,8 +4,8 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { colors } from '@/lib/constants/colors'
 import { HeaderBackButton } from '@/components/shared/HeaderBackButton'
 
-const GRADIENT_END = '#0A4A82'
-const SUBTITLE_COLOR = '#B0C4DE'
+const GRADIENT_END = colors.cerulean
+const SUBTITLE_COLOR = colors.coolHorizon
 
 export default function HelpScreen() {
   const insets = useSafeAreaInsets()

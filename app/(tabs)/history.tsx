@@ -17,7 +17,7 @@ import {
   Heart,
   Thermometer,
   Wind,
-  Droplets,
+  Frown,
   Scale,
 } from 'lucide-react-native'
 import { colors } from '@/lib/constants/colors'
@@ -26,7 +26,7 @@ import type { MeasurementType, HealthStatus } from '@/types/domain'
 /* ─────────────────────── Tokens de Cor ─────────────────────── */
 
 // Azul complementar para gradiente — sem token equivalente em colors.ts
-const GRADIENT_END = '#0A4A82'
+const GRADIENT_END = colors.cerulean
 
 const NAVY = colors.navy
 const CARD_BG = colors.white
@@ -40,7 +40,7 @@ const TYPE_ICON: Record<MeasurementType, { Icon: typeof Heart; emoji: string }> 
   heart_rate: { Icon: Heart, emoji: '❤️' },
   temperature: { Icon: Thermometer, emoji: '🌡️' },
   oxygen_saturation: { Icon: Wind, emoji: '🫁' },
-  glucose: { Icon: Droplets, emoji: '🩸' },
+  pain_level: { Icon: Frown, emoji: '🤕' },
   weight: { Icon: Scale, emoji: '⚖️' },
 }
 
@@ -49,7 +49,7 @@ const TYPE_LABEL: Record<MeasurementType, string> = {
   heart_rate: 'Freq. Cardíaca',
   temperature: 'Temperatura',
   oxygen_saturation: 'Oxigenação',
-  glucose: 'Glicose',
+  pain_level: 'Nível de Dor',
   weight: 'Peso',
 }
 
@@ -58,7 +58,7 @@ const TYPE_UNIT: Record<MeasurementType, string> = {
   heart_rate: 'BPM',
   temperature: '°C',
   oxygen_saturation: 'SpO₂ %',
-  glucose: 'mg/dL',
+  pain_level: '1–10',
   weight: 'kg',
 }
 
@@ -149,12 +149,20 @@ export default function HistoryScreen() {
 
   return (
     <View style={styles.safe}>
-      {/* ──────── 1. Header com gradiente ──────── */}
-      <LinearGradient
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* ──────── 1. Header com gradiente ──────── */}
+        <LinearGradient
         colors={[colors.navy, GRADIENT_END]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={[styles.header, { paddingTop: insets.top + 16 }]}
+        style={[
+          styles.header,
+          { paddingTop: insets.top + 16 },
+        ]}
       >
         <Text style={styles.headerTitle} allowFontScaling={true}>
           Histórico
@@ -198,11 +206,6 @@ export default function HistoryScreen() {
         </View>
       </LinearGradient>
 
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
         {/* ──────── Zona do corpo ──────── */}
         <View style={styles.bodyZone}>
 
@@ -308,15 +311,12 @@ const styles = StyleSheet.create({
   /* ── 1. Header gradiente ── */
   header: {
     paddingHorizontal: 20,
-    paddingBottom: 32,
+    paddingBottom: 24,
     gap: 16,
     borderBottomLeftRadius: 28,
     borderBottomRightRadius: 28,
-    shadowColor: colors.navy,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.25,
-    shadowRadius: 16,
-    elevation: 12,
+    zIndex: 10,
+    elevation: 10,
   },
   headerTitle: {
     fontSize: 28,
@@ -364,7 +364,7 @@ const styles = StyleSheet.create({
   pillText: {
     fontSize: 14,
     fontWeight: '700',
-    color: 'rgba(255,255,255,0.7)',
+    color: colors.white,
   },
   pillTextActive: {
     color: NAVY,
@@ -399,7 +399,10 @@ const styles = StyleSheet.create({
     backgroundColor: CARD_BG,
     borderRadius: 14,
     paddingVertical: 16,
-    marginTop: -16,
+    paddingTop: 32, // Accommodates the -24 overlap
+    marginTop: -24,
+    zIndex: 1,
+    elevation: 1,
     marginBottom: 20,
     borderWidth: 1,
     borderColor: colors.sandy + '55',

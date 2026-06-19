@@ -12,7 +12,7 @@ export type MeasurementType =
   | 'blood_pressure'
   | 'heart_rate'
   | 'temperature'
-  | 'glucose'
+  | 'pain_level'
   | 'oxygen_saturation'
   | 'weight'
 

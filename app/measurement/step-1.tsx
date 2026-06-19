@@ -39,7 +39,7 @@ export default function Step1Screen() {
   }, [_hydrated])
 
   const bgColor = isDark ? '#0F172A' : '#F8FAFC'
-  const textColor = isDark ? '#FFFFFF' : '#004B87'
+  const textColor = isDark ? '#FFFFFF' : colors.navy
 
   function handleSelect(type: MeasurementType) {
     if (activeTour === 'measurement' && currentStep === 0) {
@@ -286,7 +286,7 @@ const styles = StyleSheet.create({
   ctaText: {
     fontSize: 17,
     fontWeight: '700',
-    color: '#004B87',
+    color: colors.navy,
   },
   ctaTextDisabled: {
     color: '#94A3B8',

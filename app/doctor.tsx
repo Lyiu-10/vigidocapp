@@ -12,9 +12,9 @@ import { colors } from '@/lib/constants/colors'
 import { HeaderBackButton } from '@/components/shared/HeaderBackButton'
 
 // Azul complementar para gradiente — sem token equivalente em colors.ts
-const GRADIENT_END  = '#0A4A82'
+const GRADIENT_END  = colors.cerulean
 // Azul claro sobre navy — sem token equivalente em colors.ts
-const SUBTITLE_COLOR = '#B0C4DE'
+const SUBTITLE_COLOR = colors.coolHorizon
 
 const MOCK_DOCTOR = {
   name: 'Dr. Carlos Souza',

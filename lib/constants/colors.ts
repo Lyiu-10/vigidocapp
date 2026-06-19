@@ -16,7 +16,7 @@ export const colors = {
   // ── Neutros ──────────────────────────────────
   iceBlue:     '#F0F7FF',  // Background de cards e telas
   white:       '#FFFFFF',
-  border:      '#E5E7EB',
+  border:      '#C4A48440', // Sandy com 25% de opacidade (sutil/complementar)
   placeholder: '#9CA3AF',
 
   // ── Texto ────────────────────────────────────
