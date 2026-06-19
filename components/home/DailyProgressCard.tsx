@@ -67,7 +67,7 @@ export function DailyProgressCard({
   else                         subtitle = `${completed} de ${total} concluídas`
 
   return (
-    <View style={[styles.card, isDark && styles.cardDark, isComplete && styles.cardComplete]}>
+    <View style={[styles.card, isDark && styles.cardDark]}>
       <View style={styles.content}>
 
         {/* Anel de progresso */}
@@ -188,9 +188,5 @@ const styles = StyleSheet.create({
   reminderText: {
     fontSize: 12,
     color: colors.cerulean,
-  },
-  cardComplete: {
-    borderWidth: 1.5,
-    borderColor: colors.esmeralda + '60',
   },
 })

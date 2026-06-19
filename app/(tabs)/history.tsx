@@ -7,9 +7,7 @@ import {
   Pressable,
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { LinearGradient } from 'expo-linear-gradient'
 import {
-  CloudCheck,
   FileDown,
   ChevronDown,
   ChevronUp,
@@ -24,9 +22,6 @@ import { colors } from '@/lib/constants/colors'
 import type { MeasurementType, HealthStatus } from '@/types/domain'
 
 /* ─────────────────────── Tokens de Cor ─────────────────────── */
-
-// Azul complementar para gradiente — sem token equivalente em colors.ts
-const GRADIENT_END = colors.cerulean
 
 const NAVY = colors.navy
 const CARD_BG = colors.white
@@ -154,62 +149,27 @@ export default function HistoryScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* ──────── 1. Header com gradiente ──────── */}
-        <LinearGradient
-        colors={[colors.navy, GRADIENT_END]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={[
-          styles.header,
-          { paddingTop: insets.top + 16 },
-        ]}
-      >
-        <Text style={styles.headerTitle} allowFontScaling={true}>
-          Histórico
-        </Text>
-
-        {/* Filtros + Exportar */}
-        <View style={styles.filterRow}>
-          <View style={styles.pillGroup}>
-            {FILTERS.map((f) => {
-              const isActive = activeFilter === f.key
-              return (
-                <Pressable
-                  key={f.key}
-                  style={[styles.pill, isActive && styles.pillActive]}
-                  onPress={() => setActiveFilter(f.key)}
-                  accessibilityRole="button"
-                  accessibilityLabel={`Filtrar por ${f.label}`}
-                  accessibilityState={{ selected: isActive }}
-                >
-                  <Text
-                    style={[styles.pillText, isActive && styles.pillTextActive]}
-                    allowFontScaling={true}
-                  >
-                    {f.label}
-                  </Text>
-                </Pressable>
-              )
-            })}
-          </View>
-
-          <Pressable
-            style={({ pressed }) => [styles.exportBtn, pressed && { opacity: 0.7 }]}
-            accessibilityRole="button"
-            accessibilityLabel="Exportar histórico em PDF"
-          >
-            <FileDown size={16} color={colors.white} strokeWidth={2} />
-            <Text style={styles.exportText} allowFontScaling={true}>
-              Exportar PDF
+        {/* ──────── 1. Header — apenas contexto, sem filtros ──────── */}
+        <View
+          style={[
+            styles.header,
+            { paddingTop: insets.top + 16, backgroundColor: colors.navy },
+          ]}
+        >
+          <View style={styles.headerInfo}>
+            <Text style={styles.headerTitle} allowFontScaling={true}>
+              Histórico
             </Text>
-          </Pressable>
+            <Text style={styles.subtitle} allowFontScaling={true}>
+              Acompanhe suas medições e evolução
+            </Text>
+          </View>
         </View>
-      </LinearGradient>
 
         {/* ──────── Zona do corpo ──────── */}
         <View style={styles.bodyZone}>
 
-          {/* ──────── 3. Barra de Resumo — overlap ──────── */}
+          {/* ──────── 2. Barra de Resumo — overlap sobre o header ──────── */}
           <View style={styles.summaryRow}>
             <View style={styles.summaryBlock}>
               <Text style={[styles.summaryValue, { color: TEXT_PRIMARY }]} allowFontScaling={true}>
@@ -231,6 +191,43 @@ export default function HistoryScreen() {
               </Text>
               <Text style={styles.summaryLabel} allowFontScaling={true}>Críticos</Text>
             </View>
+          </View>
+
+          {/* ──────── 3. Filtros + Exportar (no corpo cinza) ──────── */}
+          <View style={styles.filterRow}>
+            <View style={styles.pillGroup}>
+              {FILTERS.map((f) => {
+                const isActive = activeFilter === f.key
+                return (
+                  <Pressable
+                    key={f.key}
+                    style={[styles.pill, isActive && styles.pillActive]}
+                    onPress={() => setActiveFilter(f.key)}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Filtrar por ${f.label}`}
+                    accessibilityState={{ selected: isActive }}
+                  >
+                    <Text
+                      style={[styles.pillText, isActive && styles.pillTextActive]}
+                      allowFontScaling={true}
+                    >
+                      {f.label}
+                    </Text>
+                  </Pressable>
+                )
+              })}
+            </View>
+
+            <Pressable
+              style={({ pressed }) => [styles.exportBtn, pressed && { opacity: 0.7 }]}
+              accessibilityRole="button"
+              accessibilityLabel="Exportar histórico em PDF"
+            >
+              <FileDown size={16} color={NAVY} strokeWidth={2} />
+              <Text style={styles.exportText} allowFontScaling={true}>
+                Exportar PDF
+              </Text>
+            </Pressable>
           </View>
 
           {/* ──────── 4. Cards Diários ──────── */}
@@ -303,16 +300,16 @@ export default function HistoryScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: colors.iceBlue,
+    backgroundColor: '#F8FAFC',
   },
   scrollView: { flex: 1 },
   scrollContent: {},
 
-  /* ── 1. Header gradiente ── */
+  /* ── 1. Header gradiente — apenas contexto ── */
   header: {
     paddingHorizontal: 20,
     paddingBottom: 24,
-    gap: 16,
+    gap: 4,
     borderBottomLeftRadius: 28,
     borderBottomRightRadius: 28,
     zIndex: 10,
@@ -320,90 +317,35 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 28,
-    fontWeight: '800',
-    color: colors.white,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
     letterSpacing: -0.5,
   },
-  cloudBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-    gap: 6,
+  headerInfo: {
+    gap: 4,
   },
-  cloudText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: colors.white,
-    opacity: 0.9,
-  },
-
-  /* ── 2. Filtros + Exportar ── */
-  filterRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 4,
-  },
-  pillGroup: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  pill: {
-    paddingHorizontal: 18,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255,255,255,0.15)',
-  },
-  pillActive: {
-    backgroundColor: colors.white,
-  },
-  pillText: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: colors.white,
-  },
-  pillTextActive: {
-    color: NAVY,
-  },
-  exportBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.5)',
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-  exportText: {
+  subtitle: {
     fontSize: 13,
-    fontWeight: '700',
-    color: colors.white,
+    fontWeight: '400',
+    color: colors.coolHorizon,
   },
 
   /* ── Zona do corpo ── */
   bodyZone: {
-    backgroundColor: colors.iceBlue,
+    backgroundColor: '#F8FAFC',
     paddingHorizontal: 16,
     paddingBottom: 16,
   },
 
-  /* ── 3. Resumo — overlap ── */
+  /* ── 2. Resumo ── */
   summaryRow: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: CARD_BG,
-    borderRadius: 14,
+    borderRadius: 16,
     paddingVertical: 16,
-    paddingTop: 32, // Accommodates the -24 overlap
-    marginTop: -24,
-    zIndex: 1,
-    elevation: 1,
-    marginBottom: 20,
+    marginTop: 16,
+    marginBottom: 16,
     borderWidth: 1,
     borderColor: colors.sandy + '55',
     shadowColor: colors.navy,
@@ -431,6 +373,54 @@ const styles = StyleSheet.create({
     width: 1,
     height: 32,
     backgroundColor: colors.border,
+  },
+
+  /* ── 3. Filtros + Exportar — no corpo cinza ── */
+  filterRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  pillGroup: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  pill: {
+    paddingHorizontal: 18,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: CARD_BG,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  pillActive: {
+    backgroundColor: NAVY,
+    borderColor: NAVY,
+  },
+  pillText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: NAVY,
+  },
+  pillTextActive: {
+    color: '#FFFFFF',
+  },
+  exportBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    borderWidth: 1.5,
+    borderColor: NAVY,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: CARD_BG,
+  },
+  exportText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: NAVY,
   },
 
   /* ── 4. Card diário ── */
@@ -484,7 +474,7 @@ const styles = StyleSheet.create({
   },
   vitalCell: {
     width: '47%',
-    backgroundColor: colors.iceBlue,
+    backgroundColor: '#F8FAFC',
     borderRadius: 12,
     padding: 14,
     gap: 4,

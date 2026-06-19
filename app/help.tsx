@@ -1,10 +1,8 @@
 import { View, Text, StyleSheet } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { LinearGradient } from 'expo-linear-gradient'
 import { colors } from '@/lib/constants/colors'
 import { HeaderBackButton } from '@/components/shared/HeaderBackButton'
 
-const GRADIENT_END = colors.cerulean
 const SUBTITLE_COLOR = colors.coolHorizon
 
 export default function HelpScreen() {
@@ -12,13 +10,10 @@ export default function HelpScreen() {
 
   return (
     <View style={styles.root}>
-      <LinearGradient
-        colors={[colors.navy, GRADIENT_END]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
+      <View
         style={[
           styles.header,
-          { paddingTop: insets.top + 16, minHeight: insets.top + 140 },
+          { paddingTop: insets.top + 16, backgroundColor: colors.navy },
         ]}
       >
         <HeaderBackButton />
@@ -26,7 +21,7 @@ export default function HelpScreen() {
           <Text style={styles.headerTitle}>Ajuda / FAQ</Text>
           <Text style={styles.headerSubtitle}>Dúvidas e suporte</Text>
         </View>
-      </LinearGradient>
+      </View>
 
       <View style={styles.content}>
         <View style={styles.card}>
@@ -41,7 +36,7 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.iceBlue },
   header: {
     paddingHorizontal: 20,
-    paddingBottom: 32,
+    paddingBottom: 24,
     borderBottomLeftRadius: 28,
     borderBottomRightRadius: 28,
     shadowColor: colors.navy,

@@ -1,5 +1,6 @@
-import { View, ScrollView, StyleSheet, useColorScheme } from 'react-native'
-import { useEffect, useState } from 'react'
+import { View, Text, ScrollView, StyleSheet, Pressable, useColorScheme } from 'react-native'
+import { useEffect } from 'react'
+import { router } from 'expo-router'
 import { colors } from '@/lib/constants/colors'
 import { HomeHeader } from '@/components/home/HomeHeader'
 import { DailyProgressCard } from '@/components/home/DailyProgressCard'
@@ -33,15 +34,18 @@ export default function HomeScreen() {
   const measurements  = useMeasurementStore((s) => s.records)
 
   return (
-    <View style={[styles.container, { backgroundColor: isDark ? DARK_BG : colors.iceBlue }]}>
+    <View style={[styles.container, { backgroundColor: isDark ? DARK_BG : '#F8FAFC' }]}>
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
+        {/* ── Header — apenas contexto, sem CTA ── */}
         <HomeHeader
           userName={userName}
           measurementCount={dailyProgress.completed}
         />
+
+        {/* ── Overlap: PainelRotinaDiaria sobe sobre o header azul ── */}
         <View style={styles.overlapCard}>
           <TutorialHighlight tourId="home" stepIndex={0} borderRadius={24}>
             <PainelRotinaDiaria
@@ -52,6 +56,8 @@ export default function HomeScreen() {
             />
           </TutorialHighlight>
         </View>
+
+        {/* ── Cards complementares ── */}
         <View style={styles.standardCard}>
           <TutorialHighlight tourId="home" stepIndex={2} borderRadius={16}>
             <DailyProgressCard
@@ -61,6 +67,7 @@ export default function HomeScreen() {
             />
           </TutorialHighlight>
         </View>
+
         <RecentMeasurements
           measurements={measurements}
           isLoading={false}
@@ -68,6 +75,19 @@ export default function HomeScreen() {
         />
       </ScrollView>
 
+      {/* ── CTA Flutuante ── */}
+      <View style={styles.floatingCtaContainer}>
+        <TutorialHighlight tourId="home" stepIndex={1} borderRadius={16}>
+          <Pressable
+            style={({ pressed }) => [styles.cta, pressed && styles.ctaPressed]}
+            onPress={() => router.push('/measurement/step-1')}
+            accessibilityRole="button"
+            accessibilityLabel="Registrar nova medição"
+          >
+            <Text style={styles.ctaText}>Registrar medição</Text>
+          </Pressable>
+        </TutorialHighlight>
+      </View>
     </View>
   )
 }
@@ -79,12 +99,46 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 100,
   },
+
+  /* ── Overlap: card sobe -24 sobre o header ── */
   overlapCard: {
     marginTop: -24,
-    zIndex: 1,
-    elevation: 1,
+    zIndex: 10,
+    elevation: 10,
     paddingTop: 24,
   },
+
+  /* ── CTA Flutuante ── */
+  floatingCtaContainer: {
+    position: 'absolute',
+    bottom: 24,
+    left: 16,
+    right: 16,
+    zIndex: 50,
+  },
+  cta: {
+    backgroundColor: colors.cerulean,
+    height: 56,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: colors.cerulean,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  ctaPressed: {
+    opacity: 0.85,
+  },
+  ctaText: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    letterSpacing: 0.2,
+  },
+
+  /* ── Card padrão subsequente ── */
   standardCard: {
     marginTop: 16,
   },

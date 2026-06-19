@@ -2,9 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { View, Text, StyleSheet, ScrollView } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { colors } from '@/lib/constants/colors'
-import { LinearGradient } from 'expo-linear-gradient'
-
-const GRADIENT_END = colors.cerulean
 
 const SCHEDULED_TIMES = ['08:00', '14:00', '22:00']
 
@@ -57,13 +54,10 @@ export default function NotificationsScreen() {
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
       >
-        <LinearGradient
-          colors={[colors.navy, GRADIENT_END]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
+        <View
           style={[
             styles.header,
-            { paddingTop: insets.top + 16 },
+            { paddingTop: insets.top + 16, backgroundColor: colors.navy },
           ]}
         >
           <View style={styles.headerInfo}>
@@ -72,7 +66,7 @@ export default function NotificationsScreen() {
             </Text>
             <Text style={styles.subtitle}>Gerencie seus lembretes e horários</Text>
           </View>
-        </LinearGradient>
+        </View>
 
         {/* ──────── Zona de transição ──────── */}
         <View style={styles.bodyZone}>

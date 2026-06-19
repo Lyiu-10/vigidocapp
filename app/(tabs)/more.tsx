@@ -1,11 +1,9 @@
 import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { LinearGradient } from 'expo-linear-gradient'
 import { User, CreditCard, Stethoscope, HelpCircle, MessageSquare, ChevronRight } from 'lucide-react-native'
 import { colors } from '@/lib/constants/colors'
 import { router } from 'expo-router'
 
-const GRADIENT_END = colors.cerulean
 const SUBTITLE_COLOR = colors.coolHorizon
 
 const MENU_ITEMS = [
@@ -50,20 +48,19 @@ export default function MoreScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* ──────── Header ──────── */}
-        <LinearGradient
-          colors={[colors.navy, GRADIENT_END]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
+        <View
           style={[
             styles.header,
-            { paddingTop: insets.top + 16 },
+            { paddingTop: insets.top + 16, backgroundColor: colors.navy },
           ]}
         >
-          <Text style={styles.headerTitle} accessible={true} accessibilityRole="header">
-            Mais Opções
-          </Text>
-          <Text style={styles.headerSubtitle}>Gerencie sua conta e suporte</Text>
-        </LinearGradient>
+          <View style={styles.headerInfo}>
+            <Text style={styles.headerTitle} accessible={true} accessibilityRole="header">
+              Mais Opções
+            </Text>
+            <Text style={styles.headerSubtitle}>Gerencie sua conta e suporte</Text>
+          </View>
+        </View>
 
         <View style={styles.bodyZone}>
           <View style={styles.menuContainer}>
@@ -132,6 +129,9 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: colors.white,
     letterSpacing: -0.5,
+  },
+  headerInfo: {
+    gap: 4,
   },
   headerSubtitle: {
     fontSize: 13,

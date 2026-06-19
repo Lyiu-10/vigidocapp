@@ -1,6 +1,5 @@
 import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { LinearGradient } from 'expo-linear-gradient'
 import {
   Clock,
   ShieldCheck,
@@ -11,8 +10,6 @@ import {
 import { colors } from '@/lib/constants/colors'
 import { HeaderBackButton } from '@/components/shared/HeaderBackButton'
 
-// Azul complementar para gradiente — sem token equivalente em colors.ts
-const GRADIENT_END  = colors.cerulean
 // Azul claro sobre navy — sem token equivalente em colors.ts
 const SUBTITLE_COLOR = colors.coolHorizon
 
@@ -30,22 +27,19 @@ export default function DoctorScreen() {
 
   return (
     <View style={styles.root}>
-      {/* 1. Header com gradiente */}
-      <LinearGradient
-        colors={[colors.navy, GRADIENT_END]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
+      {/* 1. Header com cor sólida */}
+      <View
         style={[
           styles.header,
-          { paddingTop: insets.top + 16, minHeight: insets.top + 140 },
+          { paddingTop: insets.top + 16, backgroundColor: colors.navy },
         ]}
       >
         <HeaderBackButton />
-        <View>
+        <View style={styles.headerInfo}>
           <Text style={styles.headerTitle}>Meu Médico</Text>
           <Text style={styles.headerSubtitle}>Acompanhamento e monitoramento</Text>
         </View>
-      </LinearGradient>
+      </View>
 
       <ScrollView
         style={styles.scroll}
@@ -146,7 +140,7 @@ const styles = StyleSheet.create({
   // Header
   header: {
     paddingHorizontal: 20,
-    paddingBottom: 32,
+    paddingBottom: 24,
     borderBottomLeftRadius: 28,
     borderBottomRightRadius: 28,
     shadowColor: colors.navy,
@@ -163,6 +157,10 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: colors.white,
     letterSpacing: -0.5,
+  },
+  headerInfo: {
+    flex: 1,
+    gap: 4,
   },
   headerSubtitle: {
     fontSize: 13,
