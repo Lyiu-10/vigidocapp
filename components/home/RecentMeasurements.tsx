@@ -130,7 +130,6 @@ export function RecentMeasurements({
           <Text style={[styles.sectionTitle, { color: textColor }]}>
             Últimas Aferições
           </Text>
-          <Text style={styles.sectionSub}>Hoje</Text>
         </View>
         <Pressable
           style={({ pressed }) => [styles.refreshBtn, pressed && { opacity: 0.7 }]}
@@ -345,12 +344,10 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: '600',
-  },
-  sectionSub: {
-    fontSize: 14,
-    color: colors.placeholder,
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
   },
   refreshBtn: {
     minWidth: 48,

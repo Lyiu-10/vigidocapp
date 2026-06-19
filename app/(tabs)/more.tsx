@@ -203,17 +203,14 @@ const styles = StyleSheet.create({
   },
   supportBanner: {
     marginTop: 24,
-    backgroundColor: colors.cerulean,
+    backgroundColor: colors.iceBlue,
     borderRadius: 20,
     padding: 20,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 16,
-    shadowColor: colors.cerulean,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 12,
-    elevation: 4,
+    borderWidth: 1.5,
+    borderColor: colors.cerulean + '60',
   },
   supportBannerPressed: {
     opacity: 0.85,
@@ -222,7 +219,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: colors.cerulean + '20',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -232,13 +229,13 @@ const styles = StyleSheet.create({
   supportTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: colors.white,
+    color: colors.navy,
     marginBottom: 4,
   },
   supportSubtitle: {
     fontSize: 13,
     fontWeight: '400',
-    color: 'rgba(255,255,255,0.8)',
+    color: colors.placeholder,
     lineHeight: 18,
   }
 })

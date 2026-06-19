@@ -87,13 +87,13 @@ export default function NotificationsScreen() {
             {/* Card principal — o mais próximo */}
             <View style={styles.reminderCard}>
               <View style={styles.cardTopLine}>
-                <Text style={styles.cardTopTitle}>Próxima aferição</Text>
+                <Text style={styles.cardTopTitle}>PRÓXIMA AFERIÇÃO</Text>
               </View>
 
               <View
                 style={styles.cardCenter}
                 accessible={true}
-                accessibilityLabel={`Lembrete principal marcado para as ${mainAlarm.timeStr}`}
+                accessibilityLabel={`Lembrete principal marcado para as ${mainAlarm.timeStr}, ${getTimeDifferenceString(mainAlarm.date, now)}`}
               >
                 <Text style={styles.timeGiant}>{mainAlarm.timeStr}</Text>
               </View>
@@ -117,7 +117,6 @@ export default function NotificationsScreen() {
                   accessibilityLabel={`Lembrete marcado para as ${alarm.timeStr}`}
                 >
                   <View style={styles.miniCardLeft}>
-                    <View style={[styles.miniBadgeDot, { backgroundColor: colors.border }]} />
                     <Text style={styles.miniCardTime}>{alarm.timeStr}</Text>
                   </View>
                   <Text style={styles.miniCardLabel}>
@@ -183,13 +182,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 16,
-    marginTop: 4,
+    marginBottom: 20,
+    marginTop: 16,
   },
   agendaTitle: {
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: 12,
+    fontWeight: '600',
     color: colors.placeholder,
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
   },
   badge: {
     backgroundColor: colors.border,
@@ -207,7 +208,9 @@ const styles = StyleSheet.create({
   reminderCard: {
     backgroundColor: colors.white,
     borderRadius: 20,
-    padding: 24,
+    paddingTop: 24,
+    paddingHorizontal: 24,
+    paddingBottom: 32,
     shadowColor: colors.navy,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.05,
@@ -222,19 +225,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cardTopTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: colors.navy,
+    fontSize: 11,
+    fontWeight: '500',
+    color: colors.placeholder,
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
   },
   cardCenter: {
     alignItems: 'center',
     marginVertical: 24,
   },
   timeGiant: {
-    fontSize: 48,
+    fontSize: 56,
     fontWeight: '800',
     color: colors.navy,
-    letterSpacing: -1,
+    letterSpacing: -2,
   },
   cardBottomPill: {
     backgroundColor: colors.iceBlue,
@@ -244,9 +249,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cardBottomText: {
-    fontSize: 14,
-    color: colors.placeholder,
-    fontWeight: '600',
+    fontSize: 15,
+    color: colors.navy,
+    fontWeight: '700',
   },
 
   /* ── Fila ── */
@@ -255,9 +260,11 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   queueTitle: {
-    fontSize: 15,
+    fontSize: 12,
     fontWeight: '600',
     color: colors.placeholder,
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
     marginBottom: 4,
   },
   miniCard: {
@@ -266,7 +273,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: colors.white,
     borderRadius: 16,
-    padding: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
     borderWidth: 1,
     borderColor: colors.sandy + '55',
   },
@@ -275,14 +283,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
   },
-  miniBadgeDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
   miniCardTime: {
-    fontSize: 20,
-    fontWeight: '700',
+    fontSize: 18,
+    fontWeight: '600',
     color: colors.navy,
   },
   miniCardLabel: {

@@ -3,7 +3,6 @@ import { useEffect } from 'react'
 import { router } from 'expo-router'
 import { colors } from '@/lib/constants/colors'
 import { HomeHeader } from '@/components/home/HomeHeader'
-import { DailyProgressCard } from '@/components/home/DailyProgressCard'
 import { PainelRotinaDiaria } from '@/components/home/PainelRotinaDiaria'
 import { RecentMeasurements } from '@/components/home/RecentMeasurements'
 import { TutorialHighlight } from '@/components/shared/TutorialHighlight'
@@ -58,16 +57,6 @@ export default function HomeScreen() {
         </View>
 
         {/* ── Cards complementares ── */}
-        <View style={styles.standardCard}>
-          <TutorialHighlight tourId="home" stepIndex={2} borderRadius={16}>
-            <DailyProgressCard
-              completed={dailyProgress.completed}
-              total={dailyProgress.total}
-              nextReminderTime={dailyProgress.nextReminderTime}
-            />
-          </TutorialHighlight>
-        </View>
-
         <RecentMeasurements
           measurements={measurements}
           isLoading={false}
@@ -117,12 +106,12 @@ const styles = StyleSheet.create({
     zIndex: 50,
   },
   cta: {
-    backgroundColor: colors.cerulean,
+    backgroundColor: colors.navy,
     height: 56,
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: colors.cerulean,
+    shadowColor: colors.navy,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -134,7 +123,7 @@ const styles = StyleSheet.create({
   ctaText: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: colors.white,
     letterSpacing: 0.2,
   },
 

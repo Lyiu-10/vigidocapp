@@ -176,13 +176,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 40,
+    paddingBottom: 24,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     paddingTop: 12,
     marginBottom: 16,
   },
@@ -195,9 +195,9 @@ const styles = StyleSheet.create({
     borderRadius: 22,
   },
   stepIndicator: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#64748B',
+    fontSize: 13,
+    fontWeight: '400',
+    color: colors.placeholder,
   },
   title: {
     fontSize: 28,
@@ -233,9 +233,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#F0FDF4',
   },
   iconWrap: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 16,
@@ -253,11 +253,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cardTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '700',
     textAlign: 'center',
     marginBottom: 6,
-    lineHeight: 22,
+    lineHeight: 20,
   },
   cardUnit: {
     fontSize: 13,
@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8FAFC', // Combina com o fundo geral
   },
   cta: {
-    backgroundColor: colors.esmeralda,
+    backgroundColor: colors.navy,
     height: 56,
     borderRadius: 16,
     alignItems: 'center',
@@ -286,7 +286,7 @@ const styles = StyleSheet.create({
   ctaText: {
     fontSize: 17,
     fontWeight: '700',
-    color: colors.navy,
+    color: colors.white,
   },
   ctaTextDisabled: {
     color: '#94A3B8',

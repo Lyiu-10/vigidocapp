@@ -333,7 +333,7 @@ const styles = StyleSheet.create({
   /* ── Zona do corpo ── */
   bodyZone: {
     backgroundColor: '#F8FAFC',
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     paddingBottom: 16,
   },
 
@@ -357,7 +357,7 @@ const styles = StyleSheet.create({
   summaryBlock: {
     flex: 1,
     alignItems: 'center',
-    gap: 2,
+    gap: 6,
   },
   summaryValue: {
     fontSize: 28,
@@ -427,7 +427,7 @@ const styles = StyleSheet.create({
   dayCard: {
     backgroundColor: CARD_BG,
     borderRadius: 16,
-    marginBottom: 12,
+    marginBottom: 16,
     borderWidth: 1,
     borderColor: colors.sandy + '55',
     shadowColor: colors.navy,
@@ -465,19 +465,19 @@ const styles = StyleSheet.create({
   vitalsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    paddingHorizontal: 12,
+    paddingHorizontal: 16,
     paddingBottom: 16,
-    gap: 10,
+    gap: 12,
     borderTopWidth: 1,
     borderTopColor: colors.border,
-    paddingTop: 14,
+    paddingTop: 16,
   },
   vitalCell: {
     width: '47%',
     backgroundColor: '#F8FAFC',
     borderRadius: 12,
-    padding: 14,
-    gap: 4,
+    padding: 20,
+    gap: 8,
   },
   vitalLabel: {
     fontSize: 13,
