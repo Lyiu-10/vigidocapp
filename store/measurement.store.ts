@@ -64,7 +64,9 @@ export const useMeasurementStore = create<MeasurementState>((set) => ({
   completed: [],
   records: INITIAL_RECORDS,
   sessionRecords: [],
-  setType: (type) => set({ selectedType: type }),
+  setType: (type) => {
+    set({ selectedType: type, value: '', systolic: '', diastolic: '' })
+  },
   setValue: (value) => set({ value }),
   setSystolic: (systolic) => set({ systolic }),
   setDiastolic: (diastolic) => set({ diastolic }),

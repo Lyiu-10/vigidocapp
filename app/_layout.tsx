@@ -24,7 +24,7 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <QueryClientProvider client={queryClient}>
           <View style={{ flex: 1 }}>
-            <StatusBar style="light" backgroundColor="#002959" />
+            <StatusBar style="light" backgroundColor="#002959" translucent={false} />
             <RootNavigator />
             <TutorialOverlay />
           </View>

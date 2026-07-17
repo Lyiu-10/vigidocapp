@@ -89,5 +89,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '400',
     color: SUBTITLE_COLOR,
+    lineHeight: 20,
   },
 })

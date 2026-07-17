@@ -30,6 +30,7 @@ export type ColorToken = keyof typeof colors
 export const statusColors = {
   normal:    colors.esmeralda,
   attention: colors.amber,
+  warning:   '#F97316', // Laranja
   critical:  colors.critical,
 } as const
 

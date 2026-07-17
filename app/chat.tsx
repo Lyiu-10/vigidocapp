@@ -1,12 +1,9 @@
 import { View, Text, TextInput, Pressable, ScrollView, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native'
 import { useState, useRef } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { LinearGradient } from 'expo-linear-gradient'
 import { Send } from 'lucide-react-native'
 import { colors } from '@/lib/constants/colors'
 import { HeaderBackButton } from '@/components/shared/HeaderBackButton'
-
-const GRADIENT_END = colors.cerulean
 
 interface Message {
   id: string
@@ -53,17 +50,14 @@ export default function ChatScreen() {
   return (
     <KeyboardAvoidingView
       style={styles.root}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={0}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
     >
       {/* Header */}
-      <LinearGradient
-        colors={[colors.navy, GRADIENT_END]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
+      <View
         style={[
           styles.header,
-          { paddingTop: insets.top + 16, minHeight: insets.top + 140 },
+          { paddingTop: insets.top + 16, backgroundColor: colors.navy },
         ]}
       >
         <HeaderBackButton />
@@ -74,7 +68,7 @@ export default function ChatScreen() {
             <Text style={styles.onlineText}>Online agora</Text>
           </View>
         </View>
-      </LinearGradient>
+      </View>
 
       {/* Mensagens */}
       <ScrollView

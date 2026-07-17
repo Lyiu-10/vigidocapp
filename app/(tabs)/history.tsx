@@ -80,7 +80,9 @@ function statusColor(status: HealthStatus): string {
   switch (status) {
     case 'normal': return colors.esmeralda
     case 'attention': return colors.amber
+    case 'warning': return '#F97316' // Laranja
     case 'critical': return colors.critical
+    default: return colors.navy
   }
 }
 
@@ -317,7 +319,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 28,
-    fontWeight: 'bold',
+    fontWeight: '700',
     color: '#FFFFFF',
     letterSpacing: -0.5,
   },
@@ -328,6 +330,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '400',
     color: colors.coolHorizon,
+    lineHeight: 20,
   },
 
   /* ── Zona do corpo ── */
@@ -368,6 +371,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     color: TEXT_MUTED,
+    letterSpacing: 0.2,
   },
   summaryDivider: {
     width: 1,
@@ -451,7 +455,7 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   dayCardDate: {
-    fontSize: 17,
+    fontSize: 18,
     fontWeight: '700',
     color: TEXT_PRIMARY,
   },
@@ -481,7 +485,7 @@ const styles = StyleSheet.create({
   },
   vitalLabel: {
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: '400',
     color: TEXT_MUTED,
     marginBottom: 2,
   },
@@ -491,8 +495,8 @@ const styles = StyleSheet.create({
     letterSpacing: -0.3,
   },
   vitalUnit: {
-    fontSize: 12,
-    fontWeight: '600',
+    fontSize: 14,
+    fontWeight: '400',
     color: TEXT_MUTED,
     marginTop: -2,
   },

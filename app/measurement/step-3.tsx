@@ -20,7 +20,6 @@ import { useMeasurementStore } from '@/store/measurement.store'
 import { useTutorialStore } from '@/store/tutorial.store'
 import { TutorialHighlight } from '@/components/shared/TutorialHighlight'
 import type { MeasurementType } from '@/types/domain'
-
 const DARK = { bg: '#0F172A', text: '#FFFFFF' } as const
 
 function isOutOfRange(type: MeasurementType, val: string): boolean {
@@ -57,9 +56,6 @@ export default function Step3Screen() {
     ? systolic.trim() === '' || diastolic.trim() === ''
     : value.trim() === ''
 
-  const showWarning = isBloodPressure
-    ? isOutOfRange(selectedType, systolic)
-    : isOutOfRange(selectedType, value)
 
   function borderColor(field: typeof focused) {
     return focused === field ? colors.cerulean : colors.border
@@ -167,15 +163,7 @@ export default function Step3Screen() {
         {/* Unidade */}
         <Text style={styles.unit}>{config.unit}</Text>
 
-        {/* Aviso de valor fora do range — não bloqueador */}
-        {showWarning && (
-          <View style={styles.warningRow}>
-            <AlertTriangle size={14} color={colors.amber} strokeWidth={2} />
-            <Text style={styles.warningText}>
-              Verifique o valor — parece fora do esperado
-            </Text>
-          </View>
-        )}
+
       </ScrollView>
 
       {/* CTA */}
@@ -288,17 +276,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
 
-  warningRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginTop: 4,
-  },
-  warningText: {
-    fontSize: 13,
-    color: colors.amber,
-    flexShrink: 1,
-  },
+
 
   footer: {
     paddingHorizontal: 20,

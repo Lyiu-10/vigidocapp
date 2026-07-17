@@ -53,15 +53,17 @@ const TYPE_BG_COLORS: Record<MeasurementType, string> = {
   weight:            colors.cerulean     + '20',
 }
 
-const STATUS_COLORS: Record<HealthStatus, string> = {
+const STATUS_COLORS: Record<string, string> = {
   normal:    colors.esmeralda,
   attention: colors.amber,
+  warning:   '#F97316', // Laranja
   critical:  colors.critical,
 }
 
-const STATUS_PILL_LABEL: Record<HealthStatus, string> = {
+const STATUS_PILL_LABEL: Record<string, string> = {
   normal:    'Normal',
   attention: 'Atenção',
+  warning:   'Alerta',
   critical:  'Crítico',
 }
 
@@ -411,7 +413,7 @@ const styles = StyleSheet.create({
   },
   statusPillText: {
     fontSize: 14,
-    fontWeight: '700',
+    fontWeight: '600',
   },
 
   // Acordeão (Grupo)
@@ -445,7 +447,7 @@ const styles = StyleSheet.create({
     height: 24,
   },
   groupTimeStr: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '800',
     letterSpacing: -0.5,
   },
@@ -492,6 +494,7 @@ const styles = StyleSheet.create({
   },
   cardUnit: {
     fontSize: 14,
+    fontWeight: '400',
     color: colors.placeholder,
   },
 

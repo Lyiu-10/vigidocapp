@@ -106,12 +106,12 @@ const styles = StyleSheet.create({
     zIndex: 50,
   },
   cta: {
-    backgroundColor: colors.navy,
+    backgroundColor: colors.cerulean,
     height: 56,
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: colors.navy,
+    shadowColor: colors.cerulean,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     opacity: 0.85,
   },
   ctaText: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '700',
     color: colors.white,
     letterSpacing: 0.2,

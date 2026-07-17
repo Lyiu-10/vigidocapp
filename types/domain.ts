@@ -16,7 +16,7 @@ export type MeasurementType =
   | 'oxygen_saturation'
   | 'weight'
 
-export type HealthStatus = 'normal' | 'attention' | 'critical'
+export type HealthStatus = 'normal' | 'attention' | 'warning' | 'critical'
 
 export interface HealthMeasurement {
   id: string

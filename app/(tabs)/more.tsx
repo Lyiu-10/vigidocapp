@@ -138,6 +138,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     color: SUBTITLE_COLOR,
     marginTop: 4,
+    lineHeight: 20,
   },
   scroll: {
     flex: 1,
@@ -195,6 +196,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '400',
     color: colors.placeholder,
+    lineHeight: 20,
   },
   divider: {
     height: 1,
@@ -213,7 +215,7 @@ const styles = StyleSheet.create({
     borderColor: colors.cerulean + '60',
   },
   supportBannerPressed: {
-    opacity: 0.85,
+    backgroundColor: '#E2E8F0',
   },
   supportIconWrap: {
     width: 48,

@@ -163,6 +163,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '400',
     color: colors.coolHorizon,
+    lineHeight: 20,
   },
 
   /* ── Zona do corpo ── */
@@ -200,8 +201,9 @@ const styles = StyleSheet.create({
   },
   badgeText: {
     fontSize: 13,
-    fontWeight: '700',
+    fontWeight: '600',
     color: colors.navy,
+    letterSpacing: 0.3,
   },
 
   /* ── Card principal ── */
@@ -290,7 +292,7 @@ const styles = StyleSheet.create({
   },
   miniCardLabel: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '400',
     color: colors.placeholder,
   },
 })

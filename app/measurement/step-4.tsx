@@ -13,6 +13,7 @@ import { ArrowLeft } from 'lucide-react-native'
 import { colors } from '@/lib/constants/colors'
 import { MEASUREMENT_CONFIG } from '@/lib/constants/measurementTypes'
 import { useMeasurementStore } from '@/store/measurement.store'
+import { getMewsColor, mewsColorToStatus } from '@/lib/utils/vitals'
 
 const DARK = { bg: '#0F172A', card: '#1E293B', text: '#FFFFFF' } as const
 
@@ -45,13 +46,16 @@ export default function Step4Screen() {
   const textColor        = isDark ? DARK.text : colors.navy
 
   function handleSave() {
+    const mewsColor = getMewsColor(selectedType!, isBloodPressure ? systolic : value, diastolic)
+    const status = mewsColorToStatus(mewsColor)
+
     addSessionRecord({
       id: String(Date.now()),
       userId: 'user-1',
       type: selectedType!,
       value: displayValue,
       unit: config.unit,
-      status: 'normal',
+      status: status,
       measuredAt: new Date().toISOString(), // Será sobrescrito no commitSession
     })
     // TODO: enviar para API via React Query mutation quando disponível

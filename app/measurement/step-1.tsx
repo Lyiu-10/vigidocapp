@@ -11,7 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { router } from 'expo-router'
 import { useEffect } from 'react'
 import { X, CheckCircle2 } from 'lucide-react-native'
-import { colors } from '@/lib/constants/colors'
+import { colors, statusColors } from '@/lib/constants/colors'
 import { MEASUREMENT_CONFIG, MEASUREMENT_TYPE_LIST } from '@/lib/constants/measurementTypes'
 import { useMeasurementStore } from '@/store/measurement.store'
 import { useTutorialStore } from '@/store/tutorial.store'
@@ -23,6 +23,7 @@ export default function Step1Screen() {
   const isDark = useColorScheme() === 'dark'
   const setType = useMeasurementStore((s) => s.setType)
   const completed = useMeasurementStore((s) => s.completed)
+  const sessionRecords = useMeasurementStore((s) => s.sessionRecords)
   const resetSession = useMeasurementStore((s) => s.resetSession)
 
   const { currentStep, activeTour, nextStep } = useTutorialStore()
@@ -104,7 +105,9 @@ export default function Step1Screen() {
           <View style={styles.gridContainer}>
             {MEASUREMENT_TYPE_LIST.map((type) => {
               const config = MEASUREMENT_CONFIG[type]
-              const isCompleted = completed.includes(type)
+              const record = sessionRecords.find((r) => r.type === type)
+              const isCompleted = !!record
+              const statusColor = record ? statusColors[record.status] : colors.esmeralda
               
               return (
                 <Pressable
@@ -112,7 +115,12 @@ export default function Step1Screen() {
                   style={({ pressed }) => [
                     styles.card,
                     isDark ? { backgroundColor: '#1E293B' } : { backgroundColor: '#FFFFFF' },
-                    isCompleted && styles.cardCompleted,
+                    isCompleted && {
+                      borderColor: statusColor,
+                      backgroundColor: statusColor + '15',
+                      elevation: 0,
+                      shadowOpacity: 0,
+                    },
                     pressed && { opacity: 0.8 },
                   ]}
                   onPress={() => handleSelect(type)}
@@ -124,7 +132,7 @@ export default function Step1Screen() {
                     <config.Icon size={32} color={config.color} strokeWidth={2} />
                     {isCompleted && (
                       <View style={styles.checkBadge}>
-                        <CheckCircle2 size={18} color="#FFFFFF" fill={colors.esmeralda} />
+                        <CheckCircle2 size={18} color="#FFFFFF" fill={statusColor} />
                       </View>
                     )}
                   </View>
@@ -228,10 +236,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#F1F5F9',
   },
-  cardCompleted: {
-    borderColor: '#D1FAE5', // Borda verde suave se estiver completo
-    backgroundColor: '#F0FDF4',
-  },
+
   iconWrap: {
     width: 64,
     height: 64,
@@ -261,7 +266,7 @@ const styles = StyleSheet.create({
   },
   cardUnit: {
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: '400',
     color: '#94A3B8',
     textAlign: 'center',
   },
@@ -271,7 +276,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8FAFC', // Combina com o fundo geral
   },
   cta: {
-    backgroundColor: colors.navy,
+    backgroundColor: colors.cerulean,
     height: 56,
     borderRadius: 16,
     alignItems: 'center',
@@ -284,7 +289,7 @@ const styles = StyleSheet.create({
     opacity: 0.85,
   },
   ctaText: {
-    fontSize: 17,
+    fontSize: 20,
     fontWeight: '700',
     color: colors.white,
   },
