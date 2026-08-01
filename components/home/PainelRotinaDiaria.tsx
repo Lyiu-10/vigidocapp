@@ -2,6 +2,8 @@ import React from 'react';
 import { View, Text, StyleSheet, useWindowDimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors } from '@/lib/constants/colors';
+import { fonts } from '@/lib/constants/fonts';
+import { TutorialHighlight } from '@/components/shared/TutorialHighlight';
 
 interface PainelRotinaDiariaProps {
   diasSeguidos: number;
@@ -99,23 +101,25 @@ export function PainelRotinaDiaria({
       </View>
 
       {/* 4. Barra de Progresso */}
-      <View 
-        style={styles.progressContainer}
-        accessible={true}
-        accessibilityLabel={`Progresso diário em ${Math.round(porcentagemProgresso)}%`}
-      >
-        <View style={styles.progressTrack}>
-          <View 
-            style={[
-              styles.progressFill, 
-              { width: `${porcentagemProgresso}%` }
-            ]} 
-          />
+      <TutorialHighlight tourId="home" stepIndex={2} borderRadius={12}>
+        <View 
+          style={styles.progressContainer}
+          accessible={true}
+          accessibilityLabel={`Progresso diário em ${Math.round(porcentagemProgresso)}%`}
+        >
+          <View style={styles.progressTrack}>
+            <View 
+              style={[
+                styles.progressFill, 
+                { width: `${porcentagemProgresso}%` }
+              ]} 
+            />
+          </View>
+          <Text style={styles.progressLabel}>
+            {Math.round(porcentagemProgresso)}% concluído
+          </Text>
         </View>
-        <Text style={styles.progressLabel}>
-          {Math.round(porcentagemProgresso)}% concluído
-        </Text>
-      </View>
+      </TutorialHighlight>
     </LinearGradient>
   );
 }
@@ -170,14 +174,14 @@ const styles = StyleSheet.create({
     backgroundColor: colors.esmeralda,
   },
   headerText: {
-    fontWeight: '800',
+    fontFamily: fonts.bold,
     color: colors.navy,
   },
   centralSection: {
     marginBottom: 20,
   },
   sectionTitle: {
-    fontWeight: '800',
+    fontFamily: fonts.title,
     color: colors.navy,
     textAlign: 'center',
     marginBottom: 16,
@@ -197,13 +201,13 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   blockSubtitle: {
-    fontWeight: '700',
+    fontFamily: fonts.semibold,
     color: colors.placeholder,
     textAlign: 'center',
     marginBottom: 6,
   },
   blockValue: {
-    fontWeight: '800',
+    fontFamily: fonts.bold,
     color: colors.navy,
     letterSpacing: -1,
   },
@@ -223,8 +227,8 @@ const styles = StyleSheet.create({
     borderRadius: 9,
   },
   progressLabel: {
+    fontFamily: fonts.bold,
     fontSize: 12,
-    fontWeight: '800',
     color: colors.esmeralda,
     textAlign: 'right',
   },

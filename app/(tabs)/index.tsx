@@ -33,7 +33,7 @@ export default function HomeScreen() {
   const measurements  = useMeasurementStore((s) => s.records)
 
   return (
-    <View style={[styles.container, { backgroundColor: isDark ? DARK_BG : '#F8FAFC' }]}>
+    <View style={[styles.container, { backgroundColor: isDark ? DARK_BG : colors.iceBlue }]}>
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}

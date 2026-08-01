@@ -8,6 +8,18 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { secureStorage } from '@/lib/storage/secureStorage'
 import { TutorialOverlay } from '@/components/shared/TutorialOverlay'
 
+import {
+  useFonts,
+  IBMPlexSans_400Regular,
+  IBMPlexSans_500Medium,
+  IBMPlexSans_600SemiBold,
+  IBMPlexSans_700Bold,
+} from '@expo-google-fonts/ibm-plex-sans'
+import {
+  Gayathri_400Regular,
+  Gayathri_700Bold,
+} from '@expo-google-fonts/gayathri'
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -19,6 +31,19 @@ const queryClient = new QueryClient({
 })
 
 export default function RootLayout() {
+  const [fontsLoaded] = useFonts({
+    IBMPlexSans_400Regular,
+    IBMPlexSans_500Medium,
+    IBMPlexSans_600SemiBold,
+    IBMPlexSans_700Bold,
+    Gayathri_400Regular,
+    Gayathri_700Bold,
+  })
+
+  if (!fontsLoaded) {
+    return null
+  }
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>

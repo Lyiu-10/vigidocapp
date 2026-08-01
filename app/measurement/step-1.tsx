@@ -12,6 +12,7 @@ import { router } from 'expo-router'
 import { useEffect } from 'react'
 import { X, CheckCircle2 } from 'lucide-react-native'
 import { colors, statusColors } from '@/lib/constants/colors'
+import { fonts } from '@/lib/constants/fonts'
 import { MEASUREMENT_CONFIG, MEASUREMENT_TYPE_LIST } from '@/lib/constants/measurementTypes'
 import { useMeasurementStore } from '@/store/measurement.store'
 import { useTutorialStore } from '@/store/tutorial.store'
@@ -39,7 +40,7 @@ export default function Step1Screen() {
     }
   }, [_hydrated])
 
-  const bgColor = isDark ? '#0F172A' : '#F8FAFC'
+  const bgColor = isDark ? '#0F172A' : colors.iceBlue
   const textColor = isDark ? '#FFFFFF' : colors.navy
 
   function handleSelect(type: MeasurementType) {
@@ -208,8 +209,8 @@ const styles = StyleSheet.create({
     color: colors.placeholder,
   },
   title: {
+    fontFamily: fonts.title,
     fontSize: 28,
-    fontWeight: '800',
     paddingHorizontal: 20,
     marginBottom: 24,
     letterSpacing: -0.5,
@@ -273,7 +274,7 @@ const styles = StyleSheet.create({
   footer: {
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: '#F8FAFC', // Combina com o fundo geral
+    backgroundColor: colors.iceBlue, // Combina com o fundo geral
   },
   cta: {
     backgroundColor: colors.cerulean,

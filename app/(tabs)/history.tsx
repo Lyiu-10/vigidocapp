@@ -19,6 +19,7 @@ import {
   Scale,
 } from 'lucide-react-native'
 import { colors } from '@/lib/constants/colors'
+import { fonts } from '@/lib/constants/fonts'
 import type { MeasurementType, HealthStatus } from '@/types/domain'
 
 /* ─────────────────────── Tokens de Cor ─────────────────────── */
@@ -302,7 +303,7 @@ export default function HistoryScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: colors.iceBlue,
   },
   scrollView: { flex: 1 },
   scrollContent: {},
@@ -318,8 +319,8 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   headerTitle: {
+    fontFamily: fonts.title,
     fontSize: 28,
-    fontWeight: '700',
     color: '#FFFFFF',
     letterSpacing: -0.5,
   },
@@ -327,15 +328,15 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   subtitle: {
+    fontFamily: fonts.regular,
     fontSize: 13,
-    fontWeight: '400',
     color: colors.coolHorizon,
     lineHeight: 20,
   },
 
   /* ── Zona do corpo ── */
   bodyZone: {
-    backgroundColor: '#F8FAFC',
+    backgroundColor: colors.iceBlue,
     paddingHorizontal: 20,
     paddingBottom: 16,
   },
@@ -478,7 +479,7 @@ const styles = StyleSheet.create({
   },
   vitalCell: {
     width: '47%',
-    backgroundColor: '#F8FAFC',
+    backgroundColor: colors.iceBlue,
     borderRadius: 12,
     padding: 20,
     gap: 8,

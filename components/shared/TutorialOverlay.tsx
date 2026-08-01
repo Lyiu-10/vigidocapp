@@ -64,9 +64,15 @@ export function TutorialOverlay() {
     height: 60,
   }
 
+  const pad = 4
+  const targetX = Math.max(0, rect.x - pad)
+  const targetY = Math.max(0, rect.y - pad)
+  const targetWidth = rect.width + pad * 2
+  const targetHeight = rect.height + pad * 2
+
   const tooltipApproxHeight = 220
-  const spaceBelow = sh - (rect.y + rect.height) - insets.bottom
-  const spaceAbove = rect.y - insets.top
+  const spaceBelow = sh - (targetY + targetHeight) - insets.bottom
+  const spaceAbove = targetY - insets.top
 
   const canShowBelow = spaceBelow >= tooltipApproxHeight
   const canShowAbove = spaceAbove >= tooltipApproxHeight
@@ -79,21 +85,21 @@ export function TutorialOverlay() {
 
   if (isTargetHuge) {
     tooltipStyle.top = (sh - tooltipApproxHeight) / 2
-  } else if (canShowBelow || (!canShowAbove && rect.y < sh / 2)) {
+  } else if (canShowBelow || (!canShowAbove && targetY < sh / 2)) {
     // Show below if there's space, or if there's no space anywhere but it's higher up
-    const tooltipTop = Math.max(insets.top + 12, Math.min(rect.y + rect.height + 12, sh - insets.bottom - tooltipApproxHeight))
+    const tooltipTop = Math.max(insets.top + 12, Math.min(targetY + targetHeight + 12, sh - insets.bottom - tooltipApproxHeight))
     tooltipStyle.top = tooltipTop
     tooltipStyle.maxHeight = Math.max(100, sh - tooltipTop - insets.bottom - 12)
     arrowType = 'up'
   } else {
     // Show above
-    const tooltipBottom = Math.max(insets.bottom + 12, sh - rect.y + 12)
+    const tooltipBottom = Math.max(insets.bottom + 12, sh - targetY + 12)
     tooltipStyle.bottom = tooltipBottom
     tooltipStyle.maxHeight = Math.max(100, sh - insets.top - tooltipBottom - 12)
     arrowType = 'down'
   }
   // Arrow horizontal center: clamp within tooltip
-  const elementCenterX  = rect.x + rect.width / 2
+  const elementCenterX  = targetX + targetWidth / 2
   const arrowRawLeft    = elementCenterX - SCREEN_MARGIN - ARROW_SIZE
   const tooltipMaxWidth = sw - SCREEN_MARGIN * 2
   const arrowLeft       = Math.max(8, Math.min(arrowRawLeft, tooltipMaxWidth - ARROW_SIZE * 2 - 8))
@@ -102,10 +108,10 @@ export function TutorialOverlay() {
     <View style={StyleSheet.absoluteFillObject} pointerEvents="box-none">
 
       {/* ── Dark panels (hole-punch around highlighted element) ── */}
-      <View style={[styles.dark, { top: 0, left: 0, right: 0, height: Math.max(0, rect.y) }]} />
-      <View style={[styles.dark, { top: rect.y + rect.height, left: 0, right: 0, bottom: 0 }]} />
-      <View style={[styles.dark, { top: rect.y, left: 0, width: Math.max(0, rect.x), height: rect.height }]} />
-      <View style={[styles.dark, { top: rect.y, left: rect.x + rect.width, right: 0, height: rect.height }]} />
+      <View style={[styles.dark, { top: 0, left: 0, right: 0, height: Math.max(0, targetY) }]} />
+      <View style={[styles.dark, { top: targetY + targetHeight, left: 0, right: 0, bottom: 0 }]} />
+      <View style={[styles.dark, { top: targetY, left: 0, width: Math.max(0, targetX), height: targetHeight }]} />
+      <View style={[styles.dark, { top: targetY, left: targetX + targetWidth, right: 0, height: targetHeight }]} />
 
       {/* ── Tooltip ── */}
       <View style={[styles.tooltip, tooltipStyle]}>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { View, Text, StyleSheet, ScrollView } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { colors } from '@/lib/constants/colors'
+import { fonts } from '@/lib/constants/fonts'
 
 const SCHEDULED_TIMES = ['08:00', '14:00', '22:00']
 
@@ -151,8 +152,8 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   title: {
+    fontFamily: fonts.title,
     fontSize: 28,
-    fontWeight: '800',
     color: colors.white,
     letterSpacing: -0.5,
   },
@@ -160,8 +161,8 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   subtitle: {
+    fontFamily: fonts.regular,
     fontSize: 13,
-    fontWeight: '400',
     color: colors.coolHorizon,
     lineHeight: 20,
   },

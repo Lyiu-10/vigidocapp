@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { colors } from '@/lib/constants/colors'
+import { fonts } from '@/lib/constants/fonts'
 import { HeaderBackButton } from '@/components/shared/HeaderBackButton'
 
 const SUBTITLE_COLOR = colors.coolHorizon
@@ -53,15 +54,16 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   headerTitle: {
-    fontSize: 24,
-    fontWeight: '800',
+    fontFamily: fonts.title,
+    fontSize: 28,
     color: colors.white,
     letterSpacing: -0.5,
   },
   headerSubtitle: {
+    fontFamily: fonts.regular,
     fontSize: 13,
-    fontWeight: '400',
     color: SUBTITLE_COLOR,
+    lineHeight: 20,
   },
   content: {
     padding: 20,

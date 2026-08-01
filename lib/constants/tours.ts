@@ -19,7 +19,7 @@ export const HOME_TOUR_STEPS: TourStep[] = [
   {
     stepIndex: 2,
     title: 'Progresso diário',
-    description: 'Este círculo mostra quantas medições você fez hoje em relação à sua meta.',
+    description: 'Esta barra mostra quantas medições você fez hoje em relação à sua meta.',
   },
   {
     stepIndex: 3,

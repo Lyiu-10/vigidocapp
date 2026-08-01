@@ -3,10 +3,13 @@
   "version": "1.0.0",
   "main": "expo-router/entry",
   "dependencies": {
+    "@expo-google-fonts/gayathri": "^0.4.1",
+    "@expo-google-fonts/ibm-plex-sans": "^0.4.1",
     "@sentry/react-native": "~7.2.0",
     "@tanstack/react-query": "^5.0.0",
     "expo": "~54.0.0",
     "expo-constants": "~18.0.13",
+    "expo-font": "^57.0.1",
     "expo-linear-gradient": "~15.0.8",
     "expo-linking": "~8.0.12",
     "expo-notifications": "^0.32.17",

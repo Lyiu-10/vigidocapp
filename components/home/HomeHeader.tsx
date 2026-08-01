@@ -2,6 +2,7 @@ import { View, Text, StyleSheet } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useState, useEffect } from 'react'
 import { colors } from '@/lib/constants/colors'
+import { fonts } from '@/lib/constants/fonts'
 import { HelpButton } from '@/components/shared/HelpButton'
 
 // Azul claro suave sobre navy — especificado no design
@@ -80,14 +81,14 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   greeting: {
+    fontFamily: fonts.title,
     fontSize: 28,
-    fontWeight: 'bold',
     color: '#FFFFFF',
     letterSpacing: -0.5,
   },
   subtitle: {
+    fontFamily: fonts.regular,
     fontSize: 14,
-    fontWeight: '400',
     color: SUBTITLE_COLOR,
     lineHeight: 20,
   },

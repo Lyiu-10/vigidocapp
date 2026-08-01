@@ -12,6 +12,7 @@ import { router } from 'expo-router'
 import { useEffect, useState } from 'react'
 import { ArrowLeft, AlertTriangle } from 'lucide-react-native'
 import { colors } from '@/lib/constants/colors'
+import { fonts } from '@/lib/constants/fonts'
 import {
   MEASUREMENT_CONFIG,
   VALIDATION_RANGES,
@@ -232,15 +233,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   typeName: {
+    fontFamily: fonts.title,
     fontSize: 20,
-    fontWeight: '700',
     letterSpacing: -0.2,
   },
 
   // Input único
   inputLarge: {
+    fontFamily: fonts.bold,
     fontSize: 48,
-    fontWeight: '700',
     textAlign: 'center',
     borderBottomWidth: 2,
     height: 80,

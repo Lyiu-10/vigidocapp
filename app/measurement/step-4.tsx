@@ -11,6 +11,7 @@ import { router } from 'expo-router'
 import { useEffect } from 'react'
 import { ArrowLeft } from 'lucide-react-native'
 import { colors } from '@/lib/constants/colors'
+import { fonts } from '@/lib/constants/fonts'
 import { MEASUREMENT_CONFIG } from '@/lib/constants/measurementTypes'
 import { useMeasurementStore } from '@/store/measurement.store'
 import { getMewsColor, mewsColorToStatus } from '@/lib/utils/vitals'
@@ -191,13 +192,13 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   cardType: {
+    fontFamily: fonts.title,
     fontSize: 20,
-    fontWeight: '700',
     letterSpacing: -0.2,
   },
   cardValue: {
+    fontFamily: fonts.bold,
     fontSize: 52,
-    fontWeight: '700',
     color: colors.cerulean,
     letterSpacing: -1,
     lineHeight: 64,

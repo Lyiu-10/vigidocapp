@@ -1,11 +1,29 @@
 import { View, Text, StyleSheet, ScrollView, Pressable, Alert } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { colors } from '@/lib/constants/colors'
+import { fonts } from '@/lib/constants/fonts'
 import { HeaderBackButton } from '@/components/shared/HeaderBackButton'
-import { Lock, LogOut, ChevronRight } from 'lucide-react-native'
+import { User, CreditCard, LogOut, ChevronRight } from 'lucide-react-native'
 import { router } from 'expo-router'
 
 const SUBTITLE_COLOR = colors.coolHorizon
+
+const PROFILE_MENU_ITEMS = [
+  {
+    id: 'personal_data',
+    title: 'Dados Pessoais',
+    subtitle: 'Nome, CPF, e-mail, data de nascimento, telefone e senha',
+    icon: User,
+    route: '/personal-data',
+  },
+  {
+    id: 'subscription',
+    title: 'Assinatura',
+    subtitle: 'Plano VigiDoc Plus, pagamentos e cancelamento',
+    icon: CreditCard,
+    route: '/subscription',
+  },
+]
 
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets()
@@ -13,16 +31,13 @@ export default function ProfileScreen() {
   function handleLogout() {
     Alert.alert('Sair da conta', 'Tem certeza que deseja sair do VigiDoc?', [
       { text: 'Cancelar', style: 'cancel' },
-      { text: 'Sair', style: 'destructive', onPress: () => router.replace('/(auth)/login') }
+      { text: 'Sair', style: 'destructive', onPress: () => router.replace('/(auth)/login') },
     ])
-  }
-
-  function handleChangePassword() {
-    Alert.alert('Em desenvolvimento', 'A funcionalidade de alterar senha estará disponível em breve.')
   }
 
   return (
     <View style={styles.root}>
+      {/* ── Header ── */}
       <View
         style={[
           styles.header,
@@ -32,83 +47,83 @@ export default function ProfileScreen() {
         <HeaderBackButton />
         <View style={styles.headerInfo}>
           <Text style={styles.headerTitle}>Meu Perfil</Text>
-          <Text style={styles.headerSubtitle}>Dados pessoais e segurança</Text>
+          <Text style={styles.headerSubtitle}>Gerencie sua conta e configurações</Text>
         </View>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {/* Avatar Central */}
-        <View style={styles.avatarSection}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarInitials}>CM</Text>
-          </View>
-          <Text style={styles.nameHeader}>Carlos Mendes</Text>
-          <Text style={styles.emailHeader}>carlos.mendes@email.com</Text>
-        </View>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.bodyZone}>
+          <View style={styles.menuContainer}>
+            {/* Itens de Navegação (Dados Pessoais & Assinatura) */}
+            {PROFILE_MENU_ITEMS.map((item, index) => {
+              const Icon = item.icon
+              return (
+                <View key={item.id}>
+                  <Pressable
+                    style={({ pressed }) => [
+                      styles.menuItem,
+                      pressed && styles.menuItemPressed,
+                    ]}
+                    onPress={() => router.push(item.route as any)}
+                    accessibilityRole="button"
+                    accessibilityLabel={item.title}
+                  >
+                    <View style={styles.iconWrap}>
+                      <Icon size={24} color={colors.navy} strokeWidth={2} />
+                    </View>
 
-        {/* Card 1: Dados Pessoais */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Dados Pessoais</Text>
-          <View style={styles.card}>
-            <View style={styles.cell}>
-              <Text style={styles.cellLabel}>Nome Completo</Text>
-              <Text style={styles.cellValue}>Carlos Eduardo Mendes</Text>
-            </View>
-            <View style={styles.divider} />
-            <View style={styles.cell}>
-              <Text style={styles.cellLabel}>E-mail</Text>
-              <Text style={styles.cellValue}>carlos.mendes@email.com</Text>
-            </View>
-            <View style={styles.divider} />
-            <View style={styles.cell}>
-              <Text style={styles.cellLabel}>Data de Nascimento</Text>
-              <Text style={styles.cellValue}>14 de Fev de 1968</Text>
-            </View>
-            <View style={styles.divider} />
-            <View style={styles.cell}>
-              <Text style={styles.cellLabel}>Celular</Text>
-              <Text style={styles.cellValue}>(11) 98765-4321</Text>
-            </View>
-          </View>
-        </View>
+                    <View style={styles.itemTextContainer}>
+                      <Text style={styles.itemTitle}>{item.title}</Text>
+                      <Text style={styles.itemSubtitle}>{item.subtitle}</Text>
+                    </View>
 
-        {/* Card 2: Segurança */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Segurança</Text>
-          <View style={styles.card}>
-            <Pressable 
-              style={({ pressed }) => [styles.actionRow, pressed && styles.actionRowPressed]}
-              onPress={handleChangePassword}
+                    <ChevronRight size={20} color={colors.placeholder} />
+                  </Pressable>
+
+                  <View style={styles.divider} />
+                </View>
+              )
+            })}
+
+            {/* Opção de Sair da Conta (Estilo idêntico com destaque crítico) */}
+            <Pressable
+              style={({ pressed }) => [
+                styles.menuItem,
+                pressed && styles.logoutItemPressed,
+              ]}
+              onPress={handleLogout}
               accessibilityRole="button"
-              accessibilityLabel="Alterar sua senha"
+              accessibilityLabel="Sair da Conta"
             >
-              <View style={styles.actionIconWrap}>
-                <Lock size={20} color={colors.navy} />
+              <View style={[styles.iconWrap, styles.logoutIconWrap]}>
+                <LogOut size={24} color={colors.critical} strokeWidth={2} />
               </View>
-              <Text style={styles.actionTitle}>Alterar Senha</Text>
-              <ChevronRight size={20} color={colors.placeholder} />
+
+              <View style={styles.itemTextContainer}>
+                <Text style={styles.logoutTitle}>Sair da Conta</Text>
+                <Text style={styles.itemSubtitle}>Desconectar da sua conta VigiDoc</Text>
+              </View>
+
+              <ChevronRight size={20} color={colors.critical + '80'} />
             </Pressable>
           </View>
         </View>
-
-        {/* Botão de Sair */}
-        <Pressable 
-          style={({ pressed }) => [styles.logoutBtn, pressed && styles.logoutBtnPressed]}
-          onPress={handleLogout}
-          accessibilityRole="button"
-          accessibilityLabel="Sair da sua conta VigiDoc"
-        >
-          <LogOut size={20} color={colors.critical} />
-          <Text style={styles.logoutText}>Sair da Conta</Text>
-        </Pressable>
-
       </ScrollView>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#F8FAFC' },
+  root: {
+    flex: 1,
+    backgroundColor: colors.iceBlue,
+  },
+
+  /* ── Header ── */
   header: {
     paddingHorizontal: 20,
     paddingBottom: 24,
@@ -129,144 +144,94 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   headerTitle: {
-    fontSize: 24,
-    fontWeight: '700',
+    fontFamily: fonts.title,
+    fontSize: 28,
     color: colors.white,
     letterSpacing: -0.5,
   },
   headerSubtitle: {
+    fontFamily: fonts.regular,
     fontSize: 13,
-    fontWeight: '400',
     color: SUBTITLE_COLOR,
     lineHeight: 20,
   },
+
+  /* ── Scroll & Body ── */
+  scroll: {
+    flex: 1,
+  },
   scrollContent: {
-    padding: 20,
-    paddingBottom: 60,
+    paddingBottom: 100,
   },
-  avatarSection: {
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: colors.cerulean,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 8,
-    marginBottom: 16,
-    borderWidth: 3,
-    borderColor: colors.white,
-    shadowColor: colors.navy,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 4,
-  },
-  avatarInitials: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: colors.white,
-  },
-  nameHeader: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: colors.navy,
-    marginBottom: 4,
-  },
-  emailHeader: {
-    fontSize: 14,
-    color: colors.placeholder,
-    fontWeight: '400',
-  },
-  section: {
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: colors.placeholder,
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
-    marginBottom: 12,
-    marginLeft: 8,
-  },
-  card: {
-    backgroundColor: colors.white,
-    borderRadius: 20,
-    shadowColor: colors.navy,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.10,
-    shadowRadius: 16,
-    elevation: 8,
-    borderWidth: 1,
-    borderColor: colors.sandy + '30',
-    overflow: 'hidden',
-  },
-  cell: {
-    paddingVertical: 16,
+  bodyZone: {
     paddingHorizontal: 20,
   },
-  cellLabel: {
-    fontSize: 13,
-    fontWeight: '400',
-    color: colors.placeholder,
-    marginBottom: 4,
+
+  /* ── Card Menu Container (Idêntico ao Mais Opções) ── */
+  menuContainer: {
+    backgroundColor: colors.white,
+    borderRadius: 20,
+    marginTop: 16,
+    zIndex: 1,
+    shadowColor: colors.navy,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 12,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: colors.sandy + '55',
+    overflow: 'hidden',
   },
-  cellValue: {
-    fontSize: 16,
-    fontWeight: '600',
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 20,
+    gap: 16,
+  },
+  menuItemPressed: {
+    backgroundColor: colors.iceBlue,
+  },
+  iconWrap: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: colors.iceBlue,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  itemTextContainer: {
+    flex: 1,
+    gap: 2,
+  },
+  itemTitle: {
+    fontFamily: fonts.bold,
+    fontSize: 17,
     color: colors.navy,
+    letterSpacing: -0.2,
+  },
+  itemSubtitle: {
+    fontFamily: fonts.regular,
+    fontSize: 13,
+    color: colors.placeholder,
+    lineHeight: 18,
   },
   divider: {
     height: 1,
     backgroundColor: colors.border,
-    marginHorizontal: 20,
+    marginLeft: 84,
   },
-  actionRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    gap: 12,
+
+  /* ── Opção de Sair ── */
+  logoutIconWrap: {
+    backgroundColor: colors.critical + '12',
   },
-  actionRowPressed: {
-    backgroundColor: colors.iceBlue,
-  },
-  actionIconWrap: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.iceBlue,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  actionTitle: {
-    flex: 1,
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.navy,
-  },
-  logoutBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 16,
-    marginTop: 8,
-    gap: 8,
-    borderRadius: 16,
-    backgroundColor: colors.critical + '10',
-    borderWidth: 1,
-    borderColor: colors.critical + '20',
-  },
-  logoutBtnPressed: {
-    backgroundColor: colors.critical + '20',
-  },
-  logoutText: {
-    fontSize: 16,
-    fontWeight: '600',
+  logoutTitle: {
+    fontFamily: fonts.bold,
+    fontSize: 17,
     color: colors.critical,
+    letterSpacing: -0.2,
+  },
+  logoutItemPressed: {
+    backgroundColor: colors.critical + '08',
   },
 })

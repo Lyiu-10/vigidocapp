@@ -8,6 +8,7 @@ import {
   Building2,
 } from 'lucide-react-native'
 import { colors } from '@/lib/constants/colors'
+import { fonts } from '@/lib/constants/fonts'
 import { HeaderBackButton } from '@/components/shared/HeaderBackButton'
 
 // Azul claro sobre navy — sem token equivalente em colors.ts
@@ -153,8 +154,8 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   headerTitle: {
-    fontSize: 24,
-    fontWeight: '800',
+    fontFamily: fonts.title,
+    fontSize: 28,
     color: colors.white,
     letterSpacing: -0.5,
   },
@@ -163,10 +164,10 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   headerSubtitle: {
+    fontFamily: fonts.regular,
     fontSize: 13,
-    fontWeight: '400',
     color: SUBTITLE_COLOR,
-    marginTop: 4,
+    lineHeight: 20,
   },
 
   // Profile card
@@ -175,7 +176,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 24,
     marginHorizontal: 16,
-    marginTop: -16,
+    marginTop: 16,
     alignItems: 'center',
     borderWidth: 1,
     borderColor: colors.sandy + '55',

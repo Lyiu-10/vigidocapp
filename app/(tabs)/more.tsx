@@ -2,6 +2,7 @@ import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { User, CreditCard, Stethoscope, HelpCircle, MessageSquare, ChevronRight } from 'lucide-react-native'
 import { colors } from '@/lib/constants/colors'
+import { fonts } from '@/lib/constants/fonts'
 import { router } from 'expo-router'
 
 const SUBTITLE_COLOR = colors.coolHorizon
@@ -10,16 +11,9 @@ const MENU_ITEMS = [
   {
     id: 'profile',
     title: 'Meu Perfil',
-    subtitle: 'Dados pessoais e configurações',
+    subtitle: 'Dados pessoais, assinatura e configurações',
     icon: User,
     route: '/profile',
-  },
-  {
-    id: 'subscription',
-    title: 'Assinatura',
-    subtitle: 'Plano, pagamentos e cancelamento',
-    icon: CreditCard,
-    route: '/subscription',
   },
   {
     id: 'doctor',
@@ -125,8 +119,8 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   headerTitle: {
+    fontFamily: fonts.title,
     fontSize: 28,
-    fontWeight: '800',
     color: colors.white,
     letterSpacing: -0.5,
   },
@@ -134,10 +128,9 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   headerSubtitle: {
+    fontFamily: fonts.regular,
     fontSize: 13,
-    fontWeight: '400',
     color: SUBTITLE_COLOR,
-    marginTop: 4,
     lineHeight: 20,
   },
   scroll: {
@@ -152,10 +145,8 @@ const styles = StyleSheet.create({
   menuContainer: {
     backgroundColor: colors.white,
     borderRadius: 20,
-    marginTop: -24,
-    paddingTop: 24,
+    marginTop: 16,
     zIndex: 1,
-    elevation: 1,
     shadowColor: colors.navy,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.05,

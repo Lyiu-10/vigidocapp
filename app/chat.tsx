@@ -3,6 +3,7 @@ import { useState, useRef } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Send } from 'lucide-react-native'
 import { colors } from '@/lib/constants/colors'
+import { fonts } from '@/lib/constants/fonts'
 import { HeaderBackButton } from '@/components/shared/HeaderBackButton'
 
 interface Message {
@@ -152,7 +153,7 @@ const styles = StyleSheet.create({
   // Header
   header: {
     paddingHorizontal: 20,
-    paddingBottom: 32,
+    paddingBottom: 24,
     borderBottomLeftRadius: 28,
     borderBottomRightRadius: 28,
     shadowColor: colors.navy,
@@ -169,8 +170,8 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   headerTitle: {
-    fontSize: 24,
-    fontWeight: '800',
+    fontFamily: fonts.title,
+    fontSize: 28,
     color: colors.white,
     letterSpacing: -0.5,
   },

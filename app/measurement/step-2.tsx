@@ -11,6 +11,7 @@ import { router } from 'expo-router'
 import { useEffect } from 'react'
 import { ArrowLeft, CheckCircle } from 'lucide-react-native'
 import { colors } from '@/lib/constants/colors'
+import { fonts } from '@/lib/constants/fonts'
 import { MEASUREMENT_CONFIG } from '@/lib/constants/measurementTypes'
 import { useMeasurementStore } from '@/store/measurement.store'
 import { useTutorialStore } from '@/store/tutorial.store'
@@ -148,8 +149,8 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   typeName: {
+    fontFamily: fonts.title,
     fontSize: 22,
-    fontWeight: '700',
     letterSpacing: -0.3,
   },
   subtitle: {
